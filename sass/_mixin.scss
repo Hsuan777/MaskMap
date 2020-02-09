@@ -1,0 +1,96 @@
+
+// 圖片取代文字
+@mixin hidden_text($width, $height, $bg_url) {
+  width: $width;
+  height: $height;
+  text-indent: 101%;
+  overflow: hidden;
+  white-space: nowrap;
+  background-image: $bg_url;
+  background-repeat: no-repeat;
+}
+
+// 三角形裝飾
+// &::before{
+//   position: absolute;
+//   content: "";
+//   right:0;
+//   bottom: -1px;
+//   border-left:30px solid  transparent;
+//   border-right:30px solid  transparent;
+//   border-bottom:30px solid  $active-color;
+//   z-index: 99;
+// }
+
+// 圓形進度條
+.progress-round{
+  &__list{
+    li{
+      position: relative;
+      width: 15px;
+      height: 15px;
+      font-size: 9px;
+      color:white ;
+      border-radius: 50%;
+      border: 1px solid theme-color("primary") ;
+      background-color: white ;
+      box-shadow: 0px 0px  0px 1px white;
+      + li{
+        &::before{
+          position: absolute;
+          content:"";
+          top: 50%;
+          left: -60px;
+          width:58px ;
+          height: 1px;
+          border:1px solid theme-color("secondary");
+          background-color: theme-color("secondary");
+        }
+      }
+      &.active{
+        ~ li{
+          box-shadow: 0px 0px  0px 1px  theme-color("secondary");
+          background-color: transparent ;
+          &::before{
+            background-color: theme-color("secondary");
+          }
+        }
+      }
+      &.check{
+      border: none;
+      color: $primary ;
+        .fa-check{
+          transform: translate(2px,-1px);
+        }
+      }
+    }
+  }
+}
+
+
+
+
+// RWD文字大小__標題
+@mixin responsiveFontSize__title{
+  font-size: 2rem;
+  @include media-breakpoint-down(md){
+    font-size: 1.6rem;
+  }
+}
+
+// RWD文字大小__通用文字
+@mixin responsiveFontSize__info{
+  font-size: 1.1rem;
+  @include media-breakpoint-down(md){
+    font-size: 1rem;
+  }
+  @include media-breakpoint-down(sm){
+    font-size: 0.9rem;
+  }
+  @include media-breakpoint-down(xs){
+    font-size: 0.8rem;
+  }
+}
+
+
+
