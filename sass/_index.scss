@@ -79,6 +79,11 @@ body {
       background-image: url("../img/ic_stock_few@2x.png");
     }
   }
+  &__zero{
+    &::after{
+      background-image: url("../img/ic_stock_none@2x.png");
+    }
+  }
 }
 // .mask_adult{
 
