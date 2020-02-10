@@ -112,4 +112,21 @@ xhr.onload =function () {
       ));
   }
   map.addLayer(markers);  
+//   TODO:抓日期 -> 判斷星期幾與周日
+  document.getElementById('mask_pharmacy').textContent =data[500].properties.name;
+  document.getElementById('mask_adult').textContent =data[500].properties.mask_adult;
+  document.getElementById('mask_child').textContent =data[500].properties.mask_child;
+  document.getElementById('address').textContent =data[500].properties.address;
+  document.getElementById('phone').textContent =data[500].properties.phone;
+
+  document.getElementById('updated').textContent ="更新時間 : "+ data[500].properties.updated;
+
+  document.getElementById('EvenOdd').textContent ="偶數 ";
+//   document.getElementById('EvenOdd').textContent ="奇數 ";
 }
+// 抓一筆資料
+// data[i].properties.name
+// data[i].properties.mask_adult
+// data[i].properties.mask_child
+
+// 抓取指定id

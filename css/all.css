@@ -10880,8 +10880,8 @@ body {
 }
 
 .mask__quantity {
-  width: 150px;
-  height: 92px;
+  min-width: 180px;
+  max-height: 110px;
   position: relative;
 }
 
