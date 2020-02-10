@@ -102,7 +102,14 @@ xhr.onload =function () {
 //   抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
   var data = JSON.parse(xhr.responseText).features;
   for (let i = 0; i < data.length; i++) {
-    markers.addLayer(L.marker([data[i].geometry.coordinates[1],data[i].geometry.coordinates[0]], {icon: greenIcon}).bindPopup(data[i].properties.name));
+    markers
+    .addLayer(L.marker([data[i].geometry.coordinates[1],data[i].geometry.coordinates[0]], {icon: greenIcon})
+    .bindPopup(data[i].properties.name
+      +"<br>"+"成人口罩 : "
+      +data[i].properties.mask_adult
+      +"<br>"+"兒童口罩 : "
+      +data[i].properties.mask_child
+      ));
   }
   map.addLayer(markers);  
 }

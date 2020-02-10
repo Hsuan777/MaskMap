@@ -58,3 +58,31 @@ body {
 .logo{
   @include hidden_text(30px,30px,url("../img/logo.png"))
 }
+.mask{
+  &__quantity{
+    width:150px ;
+    height: 92px;
+    position: relative;
+    &::after{
+      position: absolute;
+      content: "";
+      width: 50px;
+      height: 50px;
+      bottom: 0;
+      right: 0;
+      background-image: url("../img/ic_stock_full@2x.png");
+      z-index: 9;
+    }
+  }
+  &__warning{
+    &::after{
+      background-image: url("../img/ic_stock_few@2x.png");
+    }
+  }
+}
+// .mask_adult{
+
+// }
+// .mask_child{
+
+// }
