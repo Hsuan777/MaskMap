@@ -55,3 +55,6 @@ body {
 .marker-cluster span {
   line-height: 30px;
 }
+.logo{
+  @include hidden_text(30px,30px,url("../img/logo.png"))
+}
