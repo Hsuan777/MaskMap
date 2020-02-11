@@ -33,14 +33,8 @@ if (navigator.geolocation) {
 
     //‧使用者為中心，方圓 5公里視覺化
     L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
-    // Location.distanceBetween(
-    //   latLon1.getLatitude(), latLon1.getLongitude(),
-    //   latLon2.getLatitude(), latLon2.getLongitude(), result);
 
-    // float result[] = new float[1];
-    // Location.distanceBetween(32.321423, 119.434324, 60.342433, 130.342432, result);
-    
-    
+
 
 
     //‧撈取跨網域 JSON資料
@@ -51,6 +45,7 @@ if (navigator.geolocation) {
       //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
+      var  pharmacy = [];
       for (let i = 0; i < data.length; i++) {
         // - markers.addLayer( L.marker().bindPopup() ) 
         // - 將每個目標包含在 markerClusterGroup群組內
@@ -66,17 +61,29 @@ if (navigator.geolocation) {
                 + "<br>" + "兒童口罩 : "
                 + data[i].properties.mask_child
               ));
+      var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+      var distance=location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]))/1000;
+      
+      if (distance <= 5 & data[i].properties.mask_adult+data[i].properties.mask_child >= 0) {
+          console.log(
+            data[i].properties.name
+            +"成人口罩 : "+data[i].properties.mask_adult
+            +"兒童口罩 : "+data[i].properties.mask_child
+          );
+          pharmacy.push(data[i]);
+        }
       }
       map.addLayer(markers);
+      console.log(pharmacy);
 
       // TODO:抓日期 -> 判斷星期幾與周日
-      document.getElementById('mask_pharmacy').textContent = data[4000].properties.name;
-      document.getElementById('mask_adult').textContent = data[4000].properties.mask_adult;
-      document.getElementById('mask_child').textContent = data[4000].properties.mask_child;
-      document.getElementById('address').textContent = data[4000].properties.address;
-      document.getElementById('phone').textContent = data[4000].properties.phone;
+      document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
+      document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
+      document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
+      document.getElementById('address').textContent = pharmacy[0].properties.address;
+      document.getElementById('phone').textContent = pharmacy[0].properties.phone;
 
-      document.getElementById('updated').textContent = "更新時間 : " + data[4000].properties.updated;
+      document.getElementById('updated').textContent = "更新時間 : " + pharmacy[0].properties.updated;
 
       document.getElementById('EvenOdd').textContent = "偶數 ";
       // document.getElementById('EvenOdd').textContent ="奇數 ";
