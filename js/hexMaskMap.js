@@ -31,6 +31,18 @@ if (navigator.geolocation) {
     //  - 參考 https://github.com/Leaflet/Leaflet.markercluster
     var markers = L.markerClusterGroup().addTo(map);
 
+    //‧使用者為中心，方圓 5公里視覺化
+    L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
+    // Location.distanceBetween(
+    //   latLon1.getLatitude(), latLon1.getLongitude(),
+    //   latLon2.getLatitude(), latLon2.getLongitude(), result);
+
+    // float result[] = new float[1];
+    // Location.distanceBetween(32.321423, 119.434324, 60.342433, 130.342432, result);
+    
+    
+
+
     //‧撈取跨網域 JSON資料
     var xhr = new XMLHttpRequest();
     xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
@@ -43,20 +55,20 @@ if (navigator.geolocation) {
         // - markers.addLayer( L.marker().bindPopup() ) 
         // - 將每個目標包含在 markerClusterGroup群組內
         markers
-        .addLayer( 
-          L
-          .marker(
-            [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]], 
-            { icon: greenIcon })
-          .bindPopup(data[i].properties.name
-            + "<br>" + "成人口罩 : "
-            + data[i].properties.mask_adult
-            + "<br>" + "兒童口罩 : "
-            + data[i].properties.mask_child
-        ));
+          .addLayer(
+            L
+              .marker(
+                [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]],
+                { icon: greenIcon })
+              .bindPopup(data[i].properties.name
+                + "<br>" + "成人口罩 : "
+                + data[i].properties.mask_adult
+                + "<br>" + "兒童口罩 : "
+                + data[i].properties.mask_child
+              ));
       }
       map.addLayer(markers);
-      
+
       // TODO:抓日期 -> 判斷星期幾與周日
       document.getElementById('mask_pharmacy').textContent = data[4000].properties.name;
       document.getElementById('mask_adult').textContent = data[4000].properties.mask_adult;
@@ -67,7 +79,7 @@ if (navigator.geolocation) {
       document.getElementById('updated').textContent = "更新時間 : " + data[4000].properties.updated;
 
       document.getElementById('EvenOdd').textContent = "偶數 ";
-      // TODO: document.getElementById('EvenOdd').textContent ="奇數 ";
+      // document.getElementById('EvenOdd').textContent ="奇數 ";
     }
   }
   //‧跟使用者拿所在位置的權限
@@ -130,7 +142,6 @@ var orangeIcon = new L.Icon({
 //  ,true  -> 為非同步，可讓程式未回傳資料就繼續往下執行，程式預設選項
 //  ,false -> 為同步，程式需等待資料回傳後才繼續往下執行。
 //  ,false -> 使用chrome會得到警告訊息，其告知開發者這會對使用者造成不當影響。
-
 
 
 
