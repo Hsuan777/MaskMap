@@ -1,132 +1,136 @@
-// var map = L.map('map').setView([25.0469108,121.2075245], 16);
-var map = L.map('map', {
-    center: [25.0647619,121.1950143],
-    zoom: 16
-});
+//。事件  
+//  -說明 
+//‧任務
+//  -說明 
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+//。確認使用者允許所在位置，開始事件
+//  -先確認使用者裝置能不能抓地點
+//  -感謝作者分享 https://letswrite.tw/google-map-api-distance-matrix/
+if (navigator.geolocation) {
+  //‧使用者不提供權限，或是發生其它錯誤
+  function error() {
+    alert('無法取得你的位置');
+  }
+  //。成功取得允許，回傳資料給使用者
+  function success(position) {
+    //‧預先設定 leaflet參數，定位、縮放等級
+    //  - leaflet框架，想像成一個無任何資訊的大平地 
+    //  - 參數參考 https://leafletjs.com/reference-1.6.0.html
+    var map = L.map('map', {
+      center: [position.coords.latitude, position.coords.longitude],
+      zoom: 16
+    });
 
-// 使用圖資ICON 大頭針
+    //‧將 openstreetmap 加入地圖，map 為網頁的 #map
+    //  - GOOGLE API 需要額外費用
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    //‧將每個定點做群組，強化搜尋體驗
+    //  - 參考 https://github.com/Leaflet/Leaflet.markercluster
+    var markers = L.markerClusterGroup().addTo(map);
+
+    //‧撈取跨網域 JSON資料
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
+    xhr.send(null);
+    xhr.onload = function () {
+      //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
+      //  -不一定所有 JSON內的陣列取名都一樣
+      var data = JSON.parse(xhr.responseText).features;
+      for (let i = 0; i < data.length; i++) {
+        // - markers.addLayer( L.marker().bindPopup() ) 
+        // - 將每個目標包含在 markerClusterGroup群組內
+        markers
+        .addLayer( 
+          L
+          .marker(
+            [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]], 
+            { icon: greenIcon })
+          .bindPopup(data[i].properties.name
+            + "<br>" + "成人口罩 : "
+            + data[i].properties.mask_adult
+            + "<br>" + "兒童口罩 : "
+            + data[i].properties.mask_child
+        ));
+      }
+      map.addLayer(markers);
+      
+      // TODO:抓日期 -> 判斷星期幾與周日
+      document.getElementById('mask_pharmacy').textContent = data[4000].properties.name;
+      document.getElementById('mask_adult').textContent = data[4000].properties.mask_adult;
+      document.getElementById('mask_child').textContent = data[4000].properties.mask_child;
+      document.getElementById('address').textContent = data[4000].properties.address;
+      document.getElementById('phone').textContent = data[4000].properties.phone;
+
+      document.getElementById('updated').textContent = "更新時間 : " + data[4000].properties.updated;
+
+      document.getElementById('EvenOdd').textContent = "偶數 ";
+      // TODO: document.getElementById('EvenOdd').textContent ="奇數 ";
+    }
+  }
+  //‧跟使用者拿所在位置的權限
+  navigator.geolocation.getCurrentPosition(success, error);
+
+} else {
+  alert('Sorry, 你的裝置不支援地理位置功能。')
+}
+
+//‧使用 ICON 大頭針 
+//  -感謝作者分享 https://github.com/pointhi/leaflet-color-markers
 var greenIcon = new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
 var orangeIcon = new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
 
-// 資料陣列，抓跨網資料，故註解
-// var data = [
-//     { 'name': '123', lat: , lng: },
-//     { 'name': '早餐店', lat: , lng:  }
-// ]
-
-// 預先加入 .addTo(map)
-var markers = L.markerClusterGroup().addTo(map);
-
-// 每筆資料加上大頭針
-// 原來寫法
-// for (let i = 0; i < data.length; i++) {
-//   L.marker([data[i].lat,data[i].lng],{icon: greenIcon})
-//    .addTo(map)
-//    .bindPopup('<h1>'+data[i].name+'</h1><hr><p>成人口罩:200個</p><p>兒童口罩:50</p>');
-// }
-// 利用迴圈將資料釘在地圖上
-// for (let i = 0; i < data.length; i++) {
-//   markers
-//   .addLayer(L.marker([data[i].lat,data[i].lng],{icon: greenIcon}))
-//   .bindPopup('<h1>'+data[i].name+'</h1><hr><p>成人口罩:200個</p><p>兒童口罩:50</p>');
-// }
-// map.addLayer(markers);
 
 
-// markerCluster 原始寫法
-// var markers = L.markerClusterGroup();
-// markers.addLayer(L.marker(getRandomLatLng(map)));
-// 可在這裡增加自選項目
-// map.addLayer(markers);
+//。額外說明
+//‧markerCluster 範例寫法
+//  var markers = L.markerClusterGroup();
+//  markers.addLayer(L.marker(getRandomLatLng(map)));
+//  - 可在這裡增加自選項目
+//  map.addLayer(markers);
 
 
-// marker([定位],{icon: colorIcon}.addTo(map).bindPopup('顯示文字').預設開啟/關閉
-// L
-//     .marker([25.0489946, 121.2077829], { icon: greenIcon })
-//     .addTo(map)
-//     .bindPopup('<h1>測試藥局</h1><hr><p>成人口罩:200個</p><p>兒童口罩:50</p>')
-//     .openPopup();
+//‧Leaflet 範例寫法
+//  - L.marker([定位],{icon: colorIcon}.addTo(map).bindPopup('顯示文字').預設開啟/關閉
+//  L.marker([25.0489946, 121.2077829], { icon: greenIcon })
+//   .addTo(map)
+//   .bindPopup('<h1>測試藥局</h1><hr><p>成人口罩:200個</p><p>兒童口罩:50</p>')
+//   .openPopup();
 
-
-
-
-
-
-
-
-
-var xhr = new XMLHttpRequest();
-
-xhr.open('get','https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
-// 這行不用加，是因為原始資料是字串
-// xhr.setRequestHeader('Content-type', 'application/json');
-xhr.send(null);
-// 。 .send -> 空值或null 都是狀態4
-
-// 。 readyState
+//‧撈取跨網域 JSON資料
+//  - send -> 空值或null 都是狀態4
+//  - readyState
 //  : 0 -> 已產生了一個 XMLHttpRequest，但未撈取資料
 //  : 1 -> 使用了 open()，但未傳送資料過去
 //  : 4 -> 已撈到資料了
 //  : 2 -> 偵測有送出指令
 //  : 3 -> loading 量大可能出現
 
-// 。 status 頁面/資料
+//  -status 頁面/資料
 //  : 200 ->  存在
 //  : 404 ->  不存在
 
-// 。open
-//  ,true  -> 為非同步，可讓程式未回傳資料就繼續往下執行
+//  - open
+//  ,true  -> 為非同步，可讓程式未回傳資料就繼續往下執行，程式預設選項
 //  ,false -> 為同步，程式需等待資料回傳後才繼續往下執行。
-//使用chrome會得到警告訊息，其告知開發者這會對使用者造成不當影響。
+//  ,false -> 使用chrome會得到警告訊息，其告知開發者這會對使用者造成不當影響。
 
 
-xhr.onload =function () {
-//   抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
-  var data = JSON.parse(xhr.responseText).features;
-  for (let i = 0; i < data.length; i++) {
-    markers
-    .addLayer(L.marker([data[i].geometry.coordinates[1],data[i].geometry.coordinates[0]], {icon: greenIcon})
-    .bindPopup(data[i].properties.name
-      +"<br>"+"成人口罩 : "
-      +data[i].properties.mask_adult
-      +"<br>"+"兒童口罩 : "
-      +data[i].properties.mask_child
-      ));
-  }
-  map.addLayer(markers);  
-//   TODO:抓日期 -> 判斷星期幾與周日
-  document.getElementById('mask_pharmacy').textContent =data[4000].properties.name;
-  document.getElementById('mask_adult').textContent =data[4000].properties.mask_adult;
-  document.getElementById('mask_child').textContent =data[4000].properties.mask_child;
-  document.getElementById('address').textContent =data[4000].properties.address;
-  document.getElementById('phone').textContent =data[4000].properties.phone;
 
-  document.getElementById('updated').textContent ="更新時間 : "+ data[4000].properties.updated;
 
-  document.getElementById('EvenOdd').textContent ="偶數 ";
-//   document.getElementById('EvenOdd').textContent ="奇數 ";
-}
-// 抓一筆資料
-// data[i].properties.name
-// data[i].properties.mask_adult
-// data[i].properties.mask_child
-
-// 抓取指定id
