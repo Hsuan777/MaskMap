@@ -46,12 +46,16 @@ if (navigator.geolocation) {
       var pharmacy = [];
       var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
       for (let i = 0; i < data.length; i++) {
-        // var mask;
-        // if(data[i].properties.mask_adult == 0){
-        //   mask = redIcon;
-        // }else{
-        //   mask = greenIcon;
-        // }
+        //‧判斷數量更改顏色
+        var mask="";
+        if(data[i].properties.mask_adult == 0){
+          mask = greyIcon;
+        }else{
+          mask = orangeIcon;
+        }
+        if(data[i].properties.mask_adult >= 50 ){
+          mask = greenIcon;
+        };
         // - markers.addLayer( L.marker().bindPopup() ) 
         // - 將每個目標包含在 markerClusterGroup群組內
         markers
@@ -59,7 +63,7 @@ if (navigator.geolocation) {
             L
               .marker(
                 [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]],
-                { icon: greenIcon })
+                { icon: mask })
               .bindPopup(data[i].properties.name
                 + "<br>" + "成人口罩 : "
                 + data[i].properties.mask_adult
@@ -69,13 +73,12 @@ if (navigator.geolocation) {
                 + data[i].properties.service_note
               ));
         //‧計算距離
-
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
-        //。判斷條件
 
+        //。判斷篩選條件
         // ‧五公里內且成人口罩大於等於 50
         // TODO:增加更多條件
-        if (distance <= 5 & data[i].properties.mask_adult >= 25) {
+        if (distance <= 5 & data[i].properties.mask_adult > 0) {
           // console.log(
           //   data[i].properties.name
           //   + "成人口罩 : " + data[i].properties.mask_adult
@@ -168,8 +171,8 @@ var orangeIcon = new L.Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
-var redIcon = new L.Icon({
-  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+var greyIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
