@@ -68,8 +68,9 @@ if (navigator.geolocation) {
         var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
         //。判斷條件
+
         // ‧五公里內且成人口罩大於等於 50
-        // TODO:增加更多條件並選擇
+        // TODO:增加更多條件
         if (distance <= 5 & data[i].properties.mask_adult >= 50) {
           // console.log(
           //   data[i].properties.name
@@ -81,6 +82,7 @@ if (navigator.geolocation) {
       }
       map.addLayer(markers);
       //‧篩選原始資料後排序，最多 -> 最少
+
       pharmacy = pharmacy.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
       });
@@ -101,7 +103,10 @@ if (navigator.geolocation) {
       }
 
       //‧TOP 資料
+      var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
+      nearDistance = nearDistance.toFixed(1);
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
+      document.getElementById('nearDistance').textContent = nearDistance+"公里";
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
       document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
       document.getElementById('address').textContent = pharmacy[0].properties.address;
