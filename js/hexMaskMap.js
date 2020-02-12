@@ -17,6 +17,7 @@ if (navigator.geolocation) {
     //  - leaflet框架，想像成一個無任何資訊的大平地 
     //  - 參數參考 https://leafletjs.com/reference-1.6.0.html
     var map = L.map('map', {
+
       center: [position.coords.latitude, position.coords.longitude],
       zoom: 13
     });
@@ -34,9 +35,6 @@ if (navigator.geolocation) {
     //‧使用者為中心，方圓 5公里視覺化
     L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
 
-
-
-
     //‧撈取跨網域 JSON資料
     var xhr = new XMLHttpRequest();
     xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
@@ -46,10 +44,14 @@ if (navigator.geolocation) {
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
       var pharmacy = [];
-
-
-
+      var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
       for (let i = 0; i < data.length; i++) {
+        // var mask;
+        // if(data[i].properties.mask_adult == 0){
+        //   mask = redIcon;
+        // }else{
+        //   mask = greenIcon;
+        // }
         // - markers.addLayer( L.marker().bindPopup() ) 
         // - 將每個目標包含在 markerClusterGroup群組內
         markers
@@ -63,15 +65,17 @@ if (navigator.geolocation) {
                 + data[i].properties.mask_adult
                 + "<br>" + "兒童口罩 : "
                 + data[i].properties.mask_child
+                + "<br>" + "備註 : "
+                + data[i].properties.service_note
               ));
         //‧計算距離
-        var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
         //。判斷條件
 
         // ‧五公里內且成人口罩大於等於 50
         // TODO:增加更多條件
-        if (distance <= 5 & data[i].properties.mask_adult >= 50) {
+        if (distance <= 5 & data[i].properties.mask_adult >= 25) {
           // console.log(
           //   data[i].properties.name
           //   + "成人口罩 : " + data[i].properties.mask_adult
@@ -81,43 +85,43 @@ if (navigator.geolocation) {
         }
       }
       map.addLayer(markers);
-      //‧篩選原始資料後排序，最多 -> 最少
 
+      //‧篩選原始資料後排序，最多 -> 最少
       pharmacy = pharmacy.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
       });
-      console.log(pharmacy);
+      
 
       //。回寫資料到網頁
       //‧抓日期 -> 判斷星期幾與周日
       //  - Date() 日期語法
       var d = new Date();
-      var EvenOdd = ["奇數", "偶數","奇偶數"];
-      if (d.getDay()==1||3||5) {
+      var EvenOdd = ["奇數", "偶數", "奇偶數"];
+      if (d.getDay() == 1 || 3 || 5) {
         document.getElementById('EvenOdd').textContent = EvenOdd[0];
-      }else{
+      } else {
         document.getElementById('EvenOdd').textContent = EvenOdd[1];
       }
-      if (d.getDay()==0) {
+      if (d.getDay() == 0) {
         document.getElementById('EvenOdd').textContent = EvenOdd[2];
       }
-
+      console.log(pharmacy);
       //‧TOP 資料
       var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
       nearDistance = nearDistance.toFixed(1);
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
-      document.getElementById('nearDistance').textContent = nearDistance+"公里";
+      document.getElementById('nearDistance').textContent = nearDistance + "公里";
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
       document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
       document.getElementById('address').textContent = pharmacy[0].properties.address;
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('updated').textContent = "TOP 藥局更新時間 : " + pharmacy[0].properties.updated;
-      document.getElementById('service_note').textContent =  pharmacy[0].properties.service_note;
+      document.getElementById('service_note').textContent = pharmacy[0].properties.service_note;
 
       //‧增加清單資料
       pharmacyList = document.getElementById('pharmacyList');
       otherPharmacy = document.getElementById('otherPharmacy');
-      otherPharmacy.textContent ="尚有 "+(pharmacy.length-1)+" 筆";
+      otherPharmacy.textContent = "尚有 " + (pharmacy.length - 1) + " 筆";
       for (let i = 1; i < pharmacy.length; i++) {
         // TODO:優化字串組合
         var pharmacyNameLi = document.createElement('li');
@@ -127,9 +131,9 @@ if (navigator.geolocation) {
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
-          pharmacyService_note.textContent=pharmacy[i].properties.service_note
+        pharmacyService_note.textContent = pharmacy[i].properties.service_note
         pharmacyList.appendChild(pharmacyNameLi).appendChild(pharmacyInfo).appendChild(pharmacyService_note);
-        
+
       }
 
 
@@ -138,6 +142,7 @@ if (navigator.geolocation) {
 
     }
   }
+
   //‧跟使用者拿所在位置的權限
   navigator.geolocation.getCurrentPosition(success, error);
 
@@ -157,6 +162,14 @@ var greenIcon = new L.Icon({
 });
 var orangeIcon = new L.Icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+var redIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
