@@ -67,20 +67,17 @@
     <div class="row ">
       <div class="col-lg-4">
         <div class="data">
-          <div class="input-group mb-3">
 
-
-            <div class="input-group mb-3">
-              <input type="text" class="form-control border-right-0" placeholder="目前位置" aria-label="目前位置"
-                aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <!-- 使用 input-group-text，為了同步 input高度 -->
-                <button type="button" class="input-group-text btn bg-white border-left-0" id="basic-addon2">
-                  <img src="img/ic_location@2x.png" alt="">
-                </button>
-              </div>
+          <!-- <div class="input-group mb-3">
+            <input type="text" class="form-control border-right-0" placeholder="目前位置" aria-label="目前位置"
+              aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              使用 input-group-text，為了同步 input高度
+              <button type="button" class="input-group-text btn bg-white border-left-0" id="basic-addon2">
+                <img src="img/ic_location@2x.png" alt="">
+              </button>
             </div>
-          </div>
+          </div> -->
 
           <!-- 可購買日 -->
           <div class="d-flex  mb-3">
@@ -92,24 +89,36 @@
           </div>
 
           <!-- 資料更新時間 -->
-          <div class="d-flex mb-3">
-            <div>
-              <small>距離方圓 5公里 以內的供應商</small><br>
+          <div class="d-flex pl-4 ">
+            <ul class="pl-0 ">
+              <li>
+                <small>距離方圓 "5公里"</small>
+              </li>
+              <li>
+                <small>成人口罩 "最多" TOP</small>
+              </li>
+              <li><small>大於 "50" 片</small></li>
+              <li><small id="updated"></small></li>
+            </ul>
+            <!-- <div>
+              <small>距離方圓 "5公里" 以內 "最多成人口罩" 的藥局</small><br>
+              <small>只顯示大於50片</small><br>
               <small id="updated"></small>
-            </div>
-            <button type="button" class="btn btn-outline-primary ml-auto  align-self-center">重整列表</button>
+            </div> -->
+            <button type="button" class="btn btn-outline-primary ml-auto  align-self-center mt-5"
+              onclick="location.reload();">重整列表</button>
           </div>
 
           <div class="card p-3">
             <div class="d-flex justify-content-around">
-              <div class="mask__quantity mask__zero bg-zero rounded text-white p-2">
+              <div class="mask__quantity bg-success rounded text-white p-2 mr-2">
                 <p>成人口罩</p>
                 <div class="d-flex">
                   <p id="mask_adult" class="h2 font-weight-bold">200</p>
                   <span class="text-white-50 h6 mt-3">片</span>
                 </div>
               </div>
-              <div class="mask__quantity mask__warning bg-warning rounded text-white p-2">
+              <div class="mask__quantity bg-success rounded text-white p-2">
                 <p>兒童口罩</p>
                 <div class="d-flex">
                   <p id="mask_child" class="h2 font-weight-bold">50</p>
@@ -118,7 +127,7 @@
               </div>
             </div>
             <div class="card-body">
-              <h4 id="mask_pharmacy" class="card-title font-weight-bold">HEX藥局</h4>
+              <h4 id="mask_pharmacy" class="card-title font-weight-bold">藥局</h4>
               <div class="d-flex justify-content-between">
                 <h5 class="card-text">地址</h5>
                 <a href="#" id="address">於地圖查看</a>
@@ -129,16 +138,29 @@
               </div>
             </div>
           </div>
+          <!-- TODO:改成 BS收合 -->
+          <div class="accordion" id="accordionExample">
+            <div class="card border-0">
+              <div class="card-header " id="headingOne">
+                <h5 class=" text-center ">
+                  <button class=" badge-pill badge-primary px-5 py-2" type="button" data-toggle="collapse"
+                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    尚有 x 筆<br>
+                    查看更多
+                  </button>
+                  </h2>
+              </div>
 
-          <p class="text-center">尚有 x 筆</p>
-          <div class="d-flex justify-content-center">
-            <button type="button" class="btn btn-primary badge-pill px-4 pb-2">
-              查看更多
-            </button>
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body border">
+                  <ul id="pharmacyList"> </ul>
+                </div>
+              </div>
+            </div>
           </div>
-
-
         </div>
+
+
       </div>
       <div class="col-lg-8">
         <div id="map"></div>
@@ -149,7 +171,8 @@
   <footer class="text-center m-2 text bg-primary">
     <h3 class="text-white">防疫專線 1922</h3>
     <h3 class="text-white">口罩資訊 1911</h3>
-    <a href="https://challenge.thef2e.com/user/3405?schedule=4432#works-4432" class="text-white-50">視覺設計參考 / PY Design</a>
+    <a href="https://challenge.thef2e.com/user/3405?schedule=4432#works-4432" class="text-white-50">視覺設計參考 / PY
+      Design</a>
   </footer>
 
 

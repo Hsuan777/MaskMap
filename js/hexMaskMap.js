@@ -45,7 +45,10 @@ if (navigator.geolocation) {
       //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
-      var  pharmacy = [];
+      var pharmacy = [];
+
+
+
       for (let i = 0; i < data.length; i++) {
         // - markers.addLayer( L.marker().bindPopup() ) 
         // - 將每個目標包含在 markerClusterGroup群組內
@@ -61,32 +64,51 @@ if (navigator.geolocation) {
                 + "<br>" + "兒童口罩 : "
                 + data[i].properties.mask_child
               ));
-      var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
-      var distance=location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]))/1000;
-      
-      if (distance <= 5 & data[i].properties.mask_adult+data[i].properties.mask_child >= 0) {
+        var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+        var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
+
+        if (distance <= 5 & data[i].properties.mask_adult >= 50) {
           console.log(
             data[i].properties.name
-            +"成人口罩 : "+data[i].properties.mask_adult
-            +"兒童口罩 : "+data[i].properties.mask_child
+            + "成人口罩 : " + data[i].properties.mask_adult
+            + "兒童口罩 : " + data[i].properties.mask_child
           );
           pharmacy.push(data[i]);
         }
       }
       map.addLayer(markers);
+      //‧篩選後排序 最多 -> 最少
+      pharmacy = pharmacy.sort(function (a, b) {
+        return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
+      });
       console.log(pharmacy);
 
       // TODO:抓日期 -> 判斷星期幾與周日
+      // document.getElementById('EvenOdd').textContent = "偶數 ";
+      document.getElementById('EvenOdd').textContent = "奇數 ";
+
+      //。回寫資料到網頁
+      //‧創造元素
+      pharmacyList = document.getElementById('pharmacyList');
+      for (let i = 1; i < pharmacy.length; i++) {
+        // TODO:優化字串組合
+        var pharmacyLi = document.createElement('li');
+        pharmacyLi.textContent = 
+        pharmacy[i].properties.name+" @ "
+        + "成人 : "+pharmacy[i].properties.mask_adult
+        + "兒童 : "+pharmacy[i].properties.mask_child;
+        pharmacyList.appendChild(pharmacyLi);
+      }
+
+
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
       document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
       document.getElementById('address').textContent = pharmacy[0].properties.address;
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
+      document.getElementById('updated').textContent = "TOP 藥局更新時間 : " + pharmacy[0].properties.updated;
 
-      document.getElementById('updated').textContent = "更新時間 : " + pharmacy[0].properties.updated;
 
-      document.getElementById('EvenOdd').textContent = "偶數 ";
-      // document.getElementById('EvenOdd').textContent ="奇數 ";
     }
   }
   //‧跟使用者拿所在位置的權限
