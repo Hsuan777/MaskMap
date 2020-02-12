@@ -53,9 +53,31 @@
         </button>
         <div class="collapse navbar-collapse " id="navbarNavAltMarkup">
           <div class="navbar-nav ml-auto">
-            <a class="nav-item nav-link" href="#">口罩供給現況</a>
-            <!-- TODO:增加互動視窗放宣導圖片 -->
-            <a class="nav-item nav-link" href="#">口罩如何購買</a>
+            <a class="nav-item nav-link pl-0" href="#">口罩供給現況</a>
+            <a class="nav-item nav-link pl-0" href="#" data-toggle="modal" data-target="#buyMask">口罩如何購買</a>
+
+            <!-- Modal -->
+            <div class="modal fade" id="buyMask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered " role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">如何購買?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <img src="img/buyMask.jpg" alt="" class="img-fluid">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -66,8 +88,7 @@
   <div class="container-fluid">
     <div class="row ">
       <div class="col-lg-4">
-        <div class="data">
-
+          <!--。日後增加地址篩選 -->
           <!-- <div class="input-group mb-3">
             <input type="text" class="form-control border-right-0" placeholder="目前位置" aria-label="目前位置"
               aria-describedby="basic-addon2">
@@ -83,12 +104,12 @@
           <div class="d-flex  mb-3">
             <p id="EvenOdd" class="h2 font-weight-bold"></p>
             <small class="align-self-end font-weight-bold mx-2 pb-2">購買日</small>
-            <img src="img/ic_help@2x.png" class="align-self-center h-25 " alt="" title="國民身分證尾碼">
-            <!-- TODO:手機使用者看不到圖片註解，考慮使用互動視窗 -->
-            <!-- TODO:抓日期，判斷 偶奇數-->
+            <a tabindex="0" class="mt-2" role="button" data-toggle="popover" data-trigger="focus"data-placement="bottom"
+    　      data-content="國民身分證尾碼"><img src="img/ic_help@2x.png"
+              class="mt-1" alt="" title="國民身分證尾碼"></a>
           </div>
 
-          <!-- 資料更新時間 -->
+          <!-- 篩選條件說明 -->
           <div class="d-flex pl-4 ">
             <ul class="pl-0 ">
               <li>
@@ -100,15 +121,11 @@
               <li><small>大於 "50" 片</small></li>
               <li><small id="updated"></small></li>
             </ul>
-            <!-- <div>
-              <small>距離方圓 "5公里" 以內 "最多成人口罩" 的藥局</small><br>
-              <small>只顯示大於50片</small><br>
-              <small id="updated"></small>
-            </div> -->
             <button type="button" class="btn btn-outline-primary ml-auto  align-self-center mt-5"
               onclick="location.reload();">重整列表</button>
           </div>
 
+          <!-- 藥局資料 -->
           <div class="card p-3">
             <div class="d-flex justify-content-around">
               <div class="mask__quantity bg-success rounded text-white p-2 mr-2">
@@ -129,37 +146,41 @@
             <div class="card-body">
               <h4 id="mask_pharmacy" class="card-title font-weight-bold">藥局</h4>
               <div class="d-flex justify-content-between">
-                <h5 class="card-text">地址</h5>
+                <p class="card-text">地址<p>
                 <a href="#" id="address">於地圖查看</a>
               </div>
               <div class="d-flex justify-content-between">
-                <h5 class="card-text">電話</h5>
+                <p class="card-text">電話</p>
                 <a href="#" id="phone">撥打電話</a>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p class="card-text">備註</p>
+                <p href="#" id="service_note"></p>
               </div>
             </div>
           </div>
-          <!-- TODO:改成 BS收合 -->
+
+          <!-- 其他藥局資料筆數 -->
+          <p id="otherPharmacy" class="text-center mt-2"></p>
+          <!-- 其他藥局資料 -->
           <div class="accordion" id="accordionExample">
             <div class="card border-0">
               <div class="card-header " id="headingOne">
                 <h5 class=" text-center ">
                   <button class=" badge-pill badge-primary px-5 py-2" type="button" data-toggle="collapse"
                     data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    尚有 x 筆<br>
                     查看更多
                   </button>
                   </h2>
               </div>
 
-              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body border">
                   <ul id="pharmacyList"> </ul>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
 
       </div>
       <div class="col-lg-8">
@@ -168,9 +189,8 @@
     </div>
   </div>
 
-  <footer class="text-center m-2 text bg-primary">
-    <h3 class="text-white">防疫專線 1922</h3>
-    <h3 class="text-white">口罩資訊 1911</h3>
+  <footer class=" p-3 bg-primary">
+    <h4 class="text-white">防疫專線 1922 | 口罩資訊 1911</h4>
     <a href="https://challenge.thef2e.com/user/3405?schedule=4432#works-4432" class="text-white-50">視覺設計參考 / PY
       Design</a>
   </footer>
@@ -190,8 +210,21 @@
     integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
     crossorigin="anonymous"></script>
 
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script>
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
+  </script>
+
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+
+
+
   <script src="js/hexMaskMap.js"></script>
   <!-- turf可繪製進階圖形 -->
   <!-- <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script> -->

@@ -60,8 +60,8 @@ body {
 }
 .mask{
   &__quantity{
-    min-width:180px ;
-    max-height: 110px;
+    min-width:150px ;
+    max-height: 95px;
     position: relative;
     &::after{
       position: absolute;

@@ -18,7 +18,7 @@ if (navigator.geolocation) {
     //  - 參數參考 https://leafletjs.com/reference-1.6.0.html
     var map = L.map('map', {
       center: [position.coords.latitude, position.coords.longitude],
-      zoom: 16
+      zoom: 13
     });
 
     //‧將 openstreetmap 加入地圖，map 為網頁的 #map
@@ -64,49 +64,71 @@ if (navigator.geolocation) {
                 + "<br>" + "兒童口罩 : "
                 + data[i].properties.mask_child
               ));
+        //‧計算距離
         var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
-
+        //。判斷條件
+        // ‧五公里內且成人口罩大於等於 50
+        // TODO:增加更多條件並選擇
         if (distance <= 5 & data[i].properties.mask_adult >= 50) {
-          console.log(
-            data[i].properties.name
-            + "成人口罩 : " + data[i].properties.mask_adult
-            + "兒童口罩 : " + data[i].properties.mask_child
-          );
+          // console.log(
+          //   data[i].properties.name
+          //   + "成人口罩 : " + data[i].properties.mask_adult
+          //   + "兒童口罩 : " + data[i].properties.mask_child
+          // );
           pharmacy.push(data[i]);
         }
       }
       map.addLayer(markers);
-      //‧篩選後排序 最多 -> 最少
+      //‧篩選原始資料後排序，最多 -> 最少
       pharmacy = pharmacy.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
       });
       console.log(pharmacy);
 
-      // TODO:抓日期 -> 判斷星期幾與周日
-      // document.getElementById('EvenOdd').textContent = "偶數 ";
-      document.getElementById('EvenOdd').textContent = "奇數 ";
-
       //。回寫資料到網頁
-      //‧創造元素
-      pharmacyList = document.getElementById('pharmacyList');
-      for (let i = 1; i < pharmacy.length; i++) {
-        // TODO:優化字串組合
-        var pharmacyLi = document.createElement('li');
-        pharmacyLi.textContent = 
-        pharmacy[i].properties.name+" @ "
-        + "成人 : "+pharmacy[i].properties.mask_adult
-        + "兒童 : "+pharmacy[i].properties.mask_child;
-        pharmacyList.appendChild(pharmacyLi);
+      //‧抓日期 -> 判斷星期幾與周日
+      //  - Date() 日期語法
+      var d = new Date();
+      var EvenOdd = ["奇數", "偶數","奇偶數"];
+      if (d.getDay()==1||3||5) {
+        document.getElementById('EvenOdd').textContent = EvenOdd[0];
+      }else{
+        document.getElementById('EvenOdd').textContent = EvenOdd[1];
+      }
+      if (d.getDay()==0) {
+        document.getElementById('EvenOdd').textContent = EvenOdd[2];
       }
 
-
+      //‧TOP 資料
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
       document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
       document.getElementById('address').textContent = pharmacy[0].properties.address;
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('updated').textContent = "TOP 藥局更新時間 : " + pharmacy[0].properties.updated;
+      document.getElementById('service_note').textContent =  pharmacy[0].properties.service_note;
+
+      //‧增加清單資料
+      pharmacyList = document.getElementById('pharmacyList');
+      otherPharmacy = document.getElementById('otherPharmacy');
+      otherPharmacy.textContent ="尚有 "+(pharmacy.length-1)+" 筆";
+      for (let i = 1; i < pharmacy.length; i++) {
+        // TODO:優化字串組合
+        var pharmacyNameLi = document.createElement('li');
+        var pharmacyInfo = document.createElement('p');
+        var pharmacyService_note = document.createElement('p');
+        pharmacyNameLi.textContent = pharmacy[i].properties.name;
+        pharmacyInfo.textContent =
+          "成人 : " + pharmacy[i].properties.mask_adult + "  " +
+          "兒童 : " + pharmacy[i].properties.mask_child;
+          pharmacyService_note.textContent=pharmacy[i].properties.service_note
+        pharmacyList.appendChild(pharmacyNameLi).appendChild(pharmacyInfo).appendChild(pharmacyService_note);
+        
+      }
+
+
+
 
 
     }
