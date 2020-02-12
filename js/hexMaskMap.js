@@ -108,14 +108,19 @@ if (navigator.geolocation) {
       if (d.getDay() == 0) {
         document.getElementById('EvenOdd').textContent = EvenOdd[2];
       }
-      console.log(pharmacy);
       //‧TOP 資料
       var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
       nearDistance = nearDistance.toFixed(1);
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
       document.getElementById('nearDistance').textContent = nearDistance + "公里";
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
+      if ( pharmacy[0].properties.mask_adult <=50){
+        document.getElementById('adult').classList.add('bg-warning','mask__warning')
+      }
       document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
+      if ( pharmacy[0].properties.mask_child <=50){
+        document.getElementById('child').classList.add('bg-warning','mask__warning')
+      }
       document.getElementById('address').textContent = pharmacy[0].properties.address;
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('updated').textContent = "TOP 藥局更新時間 : " + pharmacy[0].properties.updated;
@@ -136,13 +141,7 @@ if (navigator.geolocation) {
           "兒童 : " + pharmacy[i].properties.mask_child;
         pharmacyService_note.textContent = pharmacy[i].properties.service_note
         pharmacyList.appendChild(pharmacyNameLi).appendChild(pharmacyInfo).appendChild(pharmacyService_note);
-
       }
-
-
-
-
-
     }
   }
 
