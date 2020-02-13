@@ -127,7 +127,6 @@ if (navigator.geolocation) {
         document.getElementById('child').classList.add('bg-warning', 'mask__warning')
       }
       document.getElementById('address').textContent = pharmacy[0].properties.address;
-      // document.getElementById('address').setAttribute('href', 'http://maps.google.com/maps?q=' + pharmacy[0].properties.name);
       document.getElementById('address').setAttribute('href', 'http://maps.google.com/maps?q=' +pharmacy[0].properties.address);
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('phone').setAttribute('href', 'tel:' + pharmacy[0].properties.phone);
