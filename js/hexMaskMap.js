@@ -125,7 +125,7 @@ if (navigator.geolocation) {
       }
       document.getElementById('address').textContent = pharmacy[0].properties.address;
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
-      document.getElementById('updated').textContent = "TOP 藥局更新時間 : " + pharmacy[0].properties.updated;
+      document.getElementById('updated').textContent = pharmacy[0].properties.updated;
       document.getElementById('service_note').textContent = pharmacy[0].properties.service_note;
 
       //‧增加清單資料

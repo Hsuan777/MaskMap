@@ -25,16 +25,17 @@
   <!-- leaflet 圖資框架 -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 
-  <!-- 增強大頭針效能 markercluster -->
+  <!-- 增強搜尋體驗 markercluster -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css">
   </link>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css">
   </link>
 
+  <link rel="icon" href="img/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="css/all.css">
 
 
-  <title>hexMask</title>
+  <title>MaskMap</title>
 
 </head>
 
@@ -42,7 +43,7 @@
   <header>
     <nav class="navbar navbar-expand-lg  bg-white mb-3">
       <div class="container-fluid pl-0">
-        <a class="navbar-brand text-third d-flex " href="index.html">
+        <a class="navbar-brand d-flex " href="index.html">
           <div class="logo mr-1">MaskMap</div>
           口罩即時查
         </a>
@@ -54,9 +55,9 @@
         <div class="collapse navbar-collapse " id="navbarNavAltMarkup">
           <div class="navbar-nav ml-auto">
             <!-- <a class="nav-item nav-link pl-0" href="#" data-toggle="modal" data-target="#mapMobile">口罩供給現況</a> -->
-            <a class="nav-item nav-link pl-0" href="#" data-toggle="modal" data-target="#buyMask">口罩如何購買</a>
 
-            <!-- Modal -->
+            <a class="nav-item nav-link pl-0" href="#" data-toggle="modal" data-target="#buyMask">口罩如何購買</a>
+            <!-- #buyMask Modal -->
             <div class="modal fade" id="buyMask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
               aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered " role="document">
@@ -72,12 +73,10 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
                   </div>
                 </div>
               </div>
             </div>
-            
 
           </div>
         </div>
@@ -89,8 +88,8 @@
   <div class="container-fluid">
     <div class="row ">
       <div class="col-lg-4">
-          <!--。日後增加地址篩選 -->
-          <!-- <div class="input-group mb-3">
+        <!--TODO:日後增加地址篩選 -->
+        <!-- <div class="input-group mb-3">
             <input type="text" class="form-control border-right-0" placeholder="目前位置" aria-label="目前位置"
               aria-describedby="basic-addon2">
             <div class="input-group-append">
@@ -101,90 +100,95 @@
             </div>
           </div> -->
 
-          <!-- 可購買日 -->
-          <div class="d-flex  mb-3">
-            <p id="EvenOdd" class="h2 font-weight-bold"></p>
-            <small class="align-self-end font-weight-bold mx-2 pb-2">購買日</small>
-            <a tabindex="0" class="mt-2" role="button" data-toggle="popover" data-trigger="focus"data-placement="bottom"
-    　      data-content="國民身分證尾碼"><img src="img/ic_help@2x.png"
-              class="mt-1" alt="" title="國民身分證尾碼，'0' 為偶數"></a>
-          </div>
+        <!-- ‧可購買日 -->
+        <div class="d-flex mb-3">
+          <p id="EvenOdd" class="h2 font-weight-bold"></p>
+          <small class="align-self-end font-weight-bold mx-2 pb-2">購買日</small>
+          <a tabindex="0" class="mt-2" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom"
+            　 data-content="國民身分證尾碼，'0' 為偶數">
+            <img src="img/ic_help@2x.png" class="mt-1" alt="國民身分證尾碼" title="國民身分證尾碼，'0' 為偶數">
+          </a>
+        </div>
 
-          <!-- 篩選條件說明 -->
-          <div class="d-flex pl-4 ">
-            <ul class="pl-0 ">
-              <li>
-                <small>距離方圓 "5公里"</small>
-              </li>
-              <li>
-                <small>成人口罩 "最多" TOP</small>
-              </li>
-              <li><small>大於 "0" 片</small></li>
-              <li><small id="updated"></small></li>
-            </ul>
-            <button type="button" class="btn btn-outline-primary ml-auto  align-self-center mt-5"
-              onclick="location.reload();">重整列表</button>
-          </div>
+        <!-- TODO:增加篩選條件與標籤，點選後篩選 -->
+        <!-- ‧篩選條件說明 -->
+        <div class="d-flex pl-4 ">
+          <ul class="pl-0">
+            <li>
+              <small>距離方圓 "5公里"</small>
+            </li>
+            <li>
+              <small>成人口罩 "最多" TOP</small>
+            </li>
+            <li><small>大於 "0" 片</small></li>
+          </ul>
+          <button type="button" class="btn btn-outline-primary ml-auto mb-auto" onclick="location.reload();">
+            重整列表
+          </button>
+        </div>
 
-          <!-- 藥局資料 -->
-          <div class="card p-3">
-            <div class="d-flex justify-content-around">
-              <div id="adult" class="mask__quantity bg-success rounded text-white p-2 mr-2">
-                <p>成人口罩</p>
-                <div class="d-flex">
-                  <p id="mask_adult" class="h2 font-weight-bold">200</p>
-                  <span class="text-white-50 h6 mt-3">片</span>
-                </div>
-              </div>
-              <div id="child" class="mask__quantity bg-success rounded text-white p-2">
-                <p>兒童口罩</p>
-                <div class="d-flex">
-                  <p id="mask_child" class="h2 font-weight-bold">50</p>
-                  <span class="text-white-50 h6 mt-3">片</span>
-                </div>
+        <!-- 藥局資料 -->
+        <div class="card p-3">
+          <div class="d-flex justify-content-around">
+            <div id="adult" class="mask__quantity bg-success rounded text-white p-2 mr-2">
+              <p>成人口罩</p>
+              <div class="d-flex">
+                <p id="mask_adult" class="h2 font-weight-bold">200</p>
+                <span class="text-white-50 h6 mt-3">片</span>
               </div>
             </div>
-            <div class="card-body">
-              <div class="d-flex ">
-                <h4 id="mask_pharmacy" class="card-title font-weight-bold">藥局</h4>
-                <small id="nearDistance" class="mt-2 ml-1 font-weight-bold"></small>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="card-text">地址<p>
-                <a href="#" id="address">於地圖查看</a>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="card-text">電話</p>
-                <a href="#" id="phone">撥打電話</a>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="card-text">備註</p>
-                <p href="#" id="service_note"></p>
+            <div id="child" class="mask__quantity bg-success rounded text-white p-2">
+              <p>兒童口罩</p>
+              <div class="d-flex">
+                <p id="mask_child" class="h2 font-weight-bold">50</p>
+                <span class="text-white-50 h6 mt-3">片</span>
               </div>
             </div>
           </div>
+          <div class="card-body">
+            <div class="d-flex ">
+              <h4 id="mask_pharmacy" class="card-title font-weight-bold">藥局</h4>
+              <small id="nearDistance" class="mt-2 ml-1 font-weight-bold"></small>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text">地址<p>
+                  <a href="#" id="address">於地圖查看</a>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text">電話</p>
+              <a href="#" id="phone">撥打電話</a>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text">更新時間</p>
+              <p href="#" id="updated"></p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text">備註</p>
+              <p href="#" id="service_note"></p>
+            </div>
+          </div>
+        </div>
 
-          <!-- 其他藥局資料筆數 -->
-          <p id="otherPharmacy" class="text-center mt-2"></p>
-          <!-- 其他藥局資料 -->
-          <div class="accordion" id="accordionExample">
-            <div class="card border-0">
-              <div class="card-header " id="headingOne">
-                <h5 class=" text-center ">
-                  <button class=" badge-pill badge-primary px-5 py-2" type="button" data-toggle="collapse"
-                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    查看更多
-                  </button>
-                  </h2>
-              </div>
+        <!-- 其他藥局資料筆數 -->
+        <p id="otherPharmacy" class="text-center mt-2"></p>
 
-              <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
-                <div class="card-body border">
-                  <ul id="pharmacyList"> </ul>
-                </div>
+        <!-- 其他藥局資料 -->
+        <div class="accordion" id="accordionPharmacy">
+          <div class="card border-0">
+            <div class="card-header text-center" id="headingOne">
+              <button class=" badge-pill badge-primary px-5 py-2" type="button" data-toggle="collapse"
+                data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                查看更多
+              </button>
+            </div>
+
+            <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionPharmacy">
+              <div class="card-body border">
+                <ul id="pharmacyList"> </ul>
               </div>
             </div>
           </div>
+        </div>
 
       </div>
       <div class="col-lg-8">
@@ -195,8 +199,9 @@
 
   <footer class=" p-3 bg-primary">
     <h4 class="text-white">防疫專線 1922 | 口罩資訊 1911</h4>
-    <a href="https://challenge.thef2e.com/user/3405?schedule=4432#works-4432" class="text-white-50">視覺設計參考 / PY
-      Design</a>
+    <a href="https://challenge.thef2e.com/user/3405?schedule=4432#works-4432" class="text-white-50">
+      視覺設計參考 / PY Design
+    </a>
   </footer>
 
 
@@ -216,37 +221,22 @@
 
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script>
+    // 提示框
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    $('#myModal').on('shown.bs.modal', function () {
-      $('#myInput').trigger('focus')
-    })
   </script>
 
+  <!-- leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+
+  <!-- markercluster JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
 
-
-
   <script src="js/hexMaskMap.js"></script>
+
   <!-- turf可繪製進階圖形 -->
   <!-- <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script> -->
-
-
-
-  <!-- 1.MarkerCluster.css
-2.MarkerCluster.Default.css (not needed if you use your own iconCreateFunction instead of the default one)
-3.leaflet.markercluster.js -->
-  <!-- 
-  geolocation
-  HTML5 geolocation api -->
-
-
-
-
-
-
 
 </body>
 
