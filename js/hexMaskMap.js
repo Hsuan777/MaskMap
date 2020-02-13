@@ -100,9 +100,11 @@ if (navigator.geolocation) {
       //  - Date() 日期語法
       var d = new Date();
       var EvenOdd = ["奇數", "偶數", "奇偶數"];
+      console.log(d.getDay() );
       if (d.getDay() == 1 || 3 || 5) {
         document.getElementById('EvenOdd').textContent = EvenOdd[0];
-      } else {
+      } 
+      if (d.getDay() == 2 || 4 || 6) {
         document.getElementById('EvenOdd').textContent = EvenOdd[1];
       }
       if (d.getDay() == 0) {
