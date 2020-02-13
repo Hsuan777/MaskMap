@@ -110,9 +110,12 @@ if (navigator.geolocation) {
       if (d.getDay() == 0) {
         document.getElementById('EvenOdd').textContent = EvenOdd[2];
       }
-      //‧TOP 資料
+      
+      //‧自身與藥局距離
       var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
       nearDistance = nearDistance.toFixed(1);
+
+      //‧其他資訊
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
       document.getElementById('nearDistance').textContent = nearDistance + "公里";
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
@@ -124,8 +127,8 @@ if (navigator.geolocation) {
         document.getElementById('child').classList.add('bg-warning', 'mask__warning')
       }
       document.getElementById('address').textContent = pharmacy[0].properties.address;
-      // document.getElementById('address').setAttribute('href', 'http://maps.google.com/maps?f=q&hl=zh-TW&geocode=&q=' + pharmacy[0].properties.name);
-      document.getElementById('address').setAttribute('href', 'http://maps.google.com/maps?q=' + pharmacy[0].properties.name);
+      // document.getElementById('address').setAttribute('href', 'http://maps.google.com/maps?q=' + pharmacy[0].properties.name);
+      document.getElementById('address').setAttribute('href', 'http://maps.google.com/maps?q=' +pharmacy[0].properties.address);
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('phone').setAttribute('href', 'tel:' + pharmacy[0].properties.phone);
       document.getElementById('updated').textContent = pharmacy[0].properties.updated;
@@ -144,7 +147,7 @@ if (navigator.geolocation) {
         var pharmacyInfo = document.createElement('p');
         var pharmacyService_note = document.createElement('p');
         pharmacyName.textContent = pharmacy[i].properties.name;
-        pharmacyName.setAttribute('href','https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.name);
+        pharmacyName.setAttribute('href','https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
