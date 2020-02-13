@@ -143,19 +143,19 @@ if (navigator.geolocation) {
         // TODO:優化字串組合
         var pharmacyLi = document.createElement('li');
         var pharmacyName = document.createElement('a');
+        var underlineU = document.createElement('u');
         var pharmacyInfo = document.createElement('p');
         var pharmacyService_note = document.createElement('p');
-        pharmacyName.textContent = pharmacy[i].properties.name;
+        underlineU.textContent = pharmacy[i].properties.name;
         pharmacyName.setAttribute('href','https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
         pharmacyService_note.textContent = pharmacy[i].properties.service_note
         // 結構是巢狀
-        pharmacyList.appendChild(pharmacyLi)
-        .appendChild(pharmacyName)
-        .appendChild(pharmacyInfo)
-        .appendChild(pharmacyService_note);
+        pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyName).appendChild(underlineU);
+        pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyInfo).classList.add('m-0');
+        pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyService_note);
       }
     }
   }
