@@ -47,13 +47,13 @@ if (navigator.geolocation) {
       var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
       for (let i = 0; i < data.length; i++) {
         //‧判斷數量更改顏色
-        var mask="";
-        if(data[i].properties.mask_adult == 0){
+        var mask = "";
+        if (data[i].properties.mask_adult == 0) {
           mask = greyIcon;
-        }else{
+        } else {
           mask = orangeIcon;
         }
-        if(data[i].properties.mask_adult >= 50 ){
+        if (data[i].properties.mask_adult >= 50) {
           mask = greenIcon;
         };
         // - markers.addLayer( L.marker().bindPopup() ) 
@@ -93,17 +93,17 @@ if (navigator.geolocation) {
       pharmacy = pharmacy.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
       });
-      
+
 
       //。回寫資料到網頁
       //‧抓日期 -> 判斷星期幾與周日
       //  - Date() 日期語法
       var d = new Date();
       var EvenOdd = ["奇數", "偶數", "奇偶數"];
-      console.log(d.getDay() );
+      console.log(d.getDay());
       if (d.getDay() == 1 || 3 || 5) {
         document.getElementById('EvenOdd').textContent = EvenOdd[0];
-      } 
+      }
       if (d.getDay() == 2 || 4 || 6) {
         document.getElementById('EvenOdd').textContent = EvenOdd[1];
       }
@@ -116,33 +116,43 @@ if (navigator.geolocation) {
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
       document.getElementById('nearDistance').textContent = nearDistance + "公里";
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;
-      if ( pharmacy[0].properties.mask_adult <=50){
-        document.getElementById('adult').classList.add('bg-warning','mask__warning')
+      if (pharmacy[0].properties.mask_adult <= 50) {
+        document.getElementById('adult').classList.add('bg-warning', 'mask__warning')
       }
       document.getElementById('mask_child').textContent = pharmacy[0].properties.mask_child;
-      if ( pharmacy[0].properties.mask_child <=50){
-        document.getElementById('child').classList.add('bg-warning','mask__warning')
+      if (pharmacy[0].properties.mask_child <= 50) {
+        document.getElementById('child').classList.add('bg-warning', 'mask__warning')
       }
       document.getElementById('address').textContent = pharmacy[0].properties.address;
+      document.getElementById('address').setAttribute('href', 'https://www.google.com.tw/maps/?q=' + pharmacy[0].properties.name);
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
+      document.getElementById('phone').setAttribute('href', 'tel:' + pharmacy[0].properties.phone);
       document.getElementById('updated').textContent = pharmacy[0].properties.updated;
       document.getElementById('service_note').textContent = pharmacy[0].properties.service_note;
 
-      //‧增加清單資料
-      pharmacyList = document.getElementById('pharmacyList');
+      //‧其他藥局比數
       otherPharmacy = document.getElementById('otherPharmacy');
       otherPharmacy.textContent = "尚有 " + (pharmacy.length - 1) + " 筆";
+
+      //‧增加其他藥局清單
+      pharmacyList = document.getElementById('pharmacyList');
       for (let i = 1; i < pharmacy.length; i++) {
         // TODO:優化字串組合
-        var pharmacyNameLi = document.createElement('li');
+        var pharmacyLi = document.createElement('li');
+        var pharmacyName = document.createElement('a');
         var pharmacyInfo = document.createElement('p');
         var pharmacyService_note = document.createElement('p');
-        pharmacyNameLi.textContent = pharmacy[i].properties.name;
+        pharmacyName.textContent = pharmacy[i].properties.name;
+        pharmacyName.setAttribute('href','https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.name);
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
         pharmacyService_note.textContent = pharmacy[i].properties.service_note
-        pharmacyList.appendChild(pharmacyNameLi).appendChild(pharmacyInfo).appendChild(pharmacyService_note);
+        // 結構是巢狀
+        pharmacyList.appendChild(pharmacyLi)
+        .appendChild(pharmacyName)
+        .appendChild(pharmacyInfo)
+        .appendChild(pharmacyService_note);
       }
     }
   }
