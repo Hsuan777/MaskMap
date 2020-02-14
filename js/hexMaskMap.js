@@ -168,7 +168,7 @@ if (navigator.geolocation) {
         let pharmacyInfo = document.createElement('p');
         let pharmacyNote = document.createElement('p');
         underlineU.textContent = pharmacy[i].properties.name;
-        pharmacyName.setAttribute('href', 'https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
+        pharmacyName.setAttribute('href', 'https://maps.google.com/maps/?q=' + pharmacy[i].properties.address);
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
