@@ -81,9 +81,9 @@ body {
     }
   }
 }
-// .mask_adult{
-
-// }
-// .mask_child{
-
-// }
+.top{
+  position: fixed;
+  z-index: 99;
+  bottom: 75px;
+  right: 25px;
+}

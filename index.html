@@ -118,14 +118,21 @@
         <div class="d-flex pl-4 ">
           <ul class="pl-0">
             <li>
-              <small>距離方圓 "5公里"</small>
+              <small>距離方圓 '5公里'</small>
             </li>
             <li>
-              <small>成人口罩 "最多" TOP</small>
+              <small>成人口罩 '最多' TOP</small>
             </li>
-            <li><small>大於 "0" 片</small></li>
+            <!-- <li><small id="maskQty__web">大於 '0' 片</small></li> -->
+            <li><small>大於 '0' 片</small></li>
+            <!-- <li>
+              <button type="button" id="overfifty" value="50" class="btn btn-outline-primary badge-pill p-0 px-2 pb-1">
+                <small> > 50片</small> 
+              </button>
+            </li> -->
           </ul>
-          <button type="button" class="btn btn-outline-primary badge-pill px-3 ml-auto align-self-center mt-3" onclick="location.reload();">
+          <button type="button" class="btn btn-outline-primary rounded-pill px-3 ml-auto align-self-center mt-3"
+            onclick="location.reload();">
             重整列表
           </button>
         </div>
@@ -155,11 +162,11 @@
             </div>
             <div class="d-flex justify-content-between">
               <p class="card-text text-nowrap mr-5">地址<p>
-                <a id="addressLink" href="#"><u id="address">於地圖查看</u></a>
+                  <a id="addressLink" href="#"><u id="address">於地圖查看</u></a>
             </div>
             <div class="d-flex justify-content-between">
               <p class="card-text">電話</p>
-              <a id="phoneLink" href="" ><u id="phone">撥打電話</u></a>
+              <a id="phoneLink" href=""><u id="phone">撥打電話</u></a>
             </div>
             <div class="d-flex justify-content-between">
               <p class="card-text">更新時間</p>
@@ -167,7 +174,7 @@
             </div>
             <div class="d-flex justify-content-between">
               <p class="card-text mr-5 text-nowrap">備註</p>
-              <p href="#" id="service_note"></p>
+              <p href="#" id="note"></p>
             </div>
           </div>
         </div>
@@ -179,7 +186,7 @@
         <div class="accordion" id="accordionPharmacy">
           <div class="card border-0">
             <div class="card-header text-center" id="headingOne">
-              <button class=" badge-pill badge-primary px-5 py-2" type="button" data-toggle="collapse"
+              <button class="btn btn-primary rounded-pill px-5 py-2" type="button" data-toggle="collapse"
                 data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                 查看更多
               </button>
@@ -200,6 +207,8 @@
     </div>
   </div>
 
+  <button type="button" class="btn btn-primary rounded-circle py-3 top">TOP</button>
+
   <footer class=" p-3 bg-primary">
     <h4 class="text-white">防疫專線 1922 | 口罩資訊 1911</h4>
     <a href="https://challenge.thef2e.com/user/3405?schedule=4432#works-4432" class="text-white-50">
@@ -215,6 +224,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
     integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
     crossorigin="anonymous"></script>

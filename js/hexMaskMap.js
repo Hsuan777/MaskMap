@@ -35,11 +35,13 @@ if (navigator.geolocation) {
     //‧使用者為中心，方圓 5公里視覺化
     L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
 
+    //‧篩選條件
+
     //‧撈取跨網域 JSON資料
     var xhr = new XMLHttpRequest();
     xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
     xhr.send(null);
-    xhr.onload = function () {
+    xhr.onload = function xhropen() {
       //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
@@ -70,22 +72,30 @@ if (navigator.geolocation) {
                 + "<br>" + "兒童口罩 : "
                 + data[i].properties.mask_child
                 + "<br>" + "備註 : "
-                + data[i].properties.service_note
+                + data[i].properties.note
               ));
         //‧計算距離
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
 
-        //。判斷篩選條件
+        //。撈取每筆資料至地圖時，順道篩選顯示條件
         // ‧五公里內且成人口罩大於等於 50
         // TODO:增加更多條件
-        if (distance <= 5 & data[i].properties.mask_adult > 0) {
-          // console.log(
-          //   data[i].properties.name
-          //   + "成人口罩 : " + data[i].properties.mask_adult
-          //   + "兒童口罩 : " + data[i].properties.mask_child
-          // );
+        var km = 5;
+        var maskQty = 0;
+        // ‧如何讓資料重跑?
+        // var maskQty__web = document.getElementById('maskQty__web');
+        // var overfifty = document.getElementById('overfifty');
+        // overfifty.addEventListener('click', function xhropen() {
+        //   maskQty__web.textContent = "大於 '50'片";
+        //   maskQty = 50;
+        // }, false);
+        if (distance <= km & data[i].properties.mask_adult > maskQty) {
           pharmacy.push(data[i]);
         }
+
+        // if (distance <= 5 & data[i].properties.mask_adult > 50) {
+        //   pharmacy.push(data[i]);
+        // }
       }
       map.addLayer(markers);
 
@@ -99,15 +109,32 @@ if (navigator.geolocation) {
       //‧抓日期 -> 判斷星期幾與周日
       //  - Date() 日期語法
       var d = new Date();
-      var EvenOdd = ["奇數", "偶數", "奇偶數"];
-      if (d.getDay() == 1 || 3 || 5) {
-        document.getElementById('EvenOdd').textContent = EvenOdd[0];
-      }else if (d.getDay() == 2 || 4 || 6) {
-        document.getElementById('EvenOdd').textContent = EvenOdd[1];
-      }else  if (d.getDay() == 0) {
-        document.getElementById('EvenOdd').textContent = EvenOdd[2];
+      EvenOdd = document.getElementById('EvenOdd');
+      switch (d.getDay()) {
+        case 1:
+        case 3:
+        case 5:
+          EvenOdd.textContent = "奇數"
+          break;
+        case 2:
+        case 4:
+        case 6:
+          EvenOdd.textContent = "偶數"
+          break;
+        case 0:
+          EvenOdd.textContent = "奇偶數"
+          break;
       }
-      
+      //  - if else 寫法
+      // var userEvenOdd = ["奇數", "偶數", "奇偶數"];
+      // if (d.getDay() == 1 || 3 || 5) {
+      //   EvenOdd.textContent = userEvenOdd[0];
+      // }else if (d.getDay() == 2 || 4 || 6) {
+      //   EvenOdd.textContent = userEvenOdd[1];
+      // }else(
+      //   EvenOdd.textContent = userEvenOdd[2]
+      // )
+
       //‧自身與藥局距離
       var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
       nearDistance = nearDistance.toFixed(1);
@@ -128,7 +155,7 @@ if (navigator.geolocation) {
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('phoneLink').setAttribute('href', 'tel:' + pharmacy[0].properties.phone);
       document.getElementById('updated').textContent = pharmacy[0].properties.updated;
-      document.getElementById('service_note').textContent = pharmacy[0].properties.service_note;
+      document.getElementById('note').textContent = pharmacy[0].properties.note;
 
       //‧其他藥局比數
       otherPharmacy = document.getElementById('otherPharmacy');
@@ -142,17 +169,17 @@ if (navigator.geolocation) {
         var pharmacyName = document.createElement('a');
         var underlineU = document.createElement('u');
         var pharmacyInfo = document.createElement('p');
-        var pharmacyService_note = document.createElement('p');
+        var pharmacyNote = document.createElement('p');
         underlineU.textContent = pharmacy[i].properties.name;
         pharmacyName.setAttribute('href', 'https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
-        pharmacyService_note.textContent = pharmacy[i].properties.service_note
+        pharmacyNote.textContent = pharmacy[i].properties.note
         // 結構是巢狀
         pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyName).appendChild(underlineU);
         pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyInfo).classList.add('m-0');
-        pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyService_note);
+        pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyNote);
       }
     }
   }
@@ -190,6 +217,14 @@ var greyIcon = new L.Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
+
+$(document).ready(function() {
+  $('.top').click(function() {
+		event.preventDefault();
+		$('html,body').animate({scrollTop:0}, 1000);
+	});
+});
+// 如何改成原生JS?
 
 
 
