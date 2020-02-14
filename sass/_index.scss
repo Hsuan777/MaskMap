@@ -81,9 +81,12 @@ body {
     }
   }
 }
+#map{
+  z-index: 1;
+}
 .top{
   position: fixed;
   z-index: 99;
-  bottom: 75px;
+  bottom: 100px;
   right: 25px;
 }

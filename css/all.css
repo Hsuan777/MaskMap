@@ -11068,10 +11068,14 @@ body {
   background-image: url("../img/ic_stock_none@2x.png");
 }
 
+#map {
+  z-index: 1;
+}
+
 .top {
   position: fixed;
   z-index: 99;
-  bottom: 75px;
+  bottom: 100px;
   right: 25px;
 }
 /*# sourceMappingURL=all.css.map */

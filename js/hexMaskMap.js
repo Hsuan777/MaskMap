@@ -36,16 +36,28 @@ if (navigator.geolocation) {
     L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
 
     //‧篩選條件
+    var pharmacy = [];
+    var km = 5;
+    var maskQty = "";
+    // ‧如何讓資料重跑?
+    
+    // var maskQty__web = document.getElementById('maskQty__web');
+    // var overfifty = document.getElementById('overfifty');
+    // overfifty.addEventListener('click', function () {
+    //   maskQty__web.textContent = "大於 '50'片";
+    //   maskQty = 50;
+    // }, false);
+    
 
     //‧撈取跨網域 JSON資料
     var xhr = new XMLHttpRequest();
     xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
     xhr.send(null);
-    xhr.onload = function xhropen() {
+    xhr.onload = function () {
       //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
-      var pharmacy = [];
+      
       var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
       for (let i = 0; i < data.length; i++) {
         //‧判斷數量更改顏色
@@ -73,29 +85,14 @@ if (navigator.geolocation) {
                 + data[i].properties.mask_child
                 + "<br>" + "備註 : "
                 + data[i].properties.note
-              ));
+          ));
         //‧計算距離
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
 
         //。撈取每筆資料至地圖時，順道篩選顯示條件
-        // ‧五公里內且成人口罩大於等於 50
-        // TODO:增加更多條件
-        var km = 5;
-        var maskQty = 0;
-        // ‧如何讓資料重跑?
-        // var maskQty__web = document.getElementById('maskQty__web');
-        // var overfifty = document.getElementById('overfifty');
-        // overfifty.addEventListener('click', function xhropen() {
-        //   maskQty__web.textContent = "大於 '50'片";
-        //   maskQty = 50;
-        // }, false);
         if (distance <= km & data[i].properties.mask_adult > maskQty) {
           pharmacy.push(data[i]);
         }
-
-        // if (distance <= 5 & data[i].properties.mask_adult > 50) {
-        //   pharmacy.push(data[i]);
-        // }
       }
       map.addLayer(markers);
 
@@ -165,11 +162,11 @@ if (navigator.geolocation) {
       pharmacyList = document.getElementById('pharmacyList');
       for (let i = 1; i < pharmacy.length; i++) {
         // TODO:優化字串組合
-        var pharmacyLi = document.createElement('li');
-        var pharmacyName = document.createElement('a');
-        var underlineU = document.createElement('u');
-        var pharmacyInfo = document.createElement('p');
-        var pharmacyNote = document.createElement('p');
+        let pharmacyLi = document.createElement('li');
+        let pharmacyName = document.createElement('a');
+        let underlineU = document.createElement('u');
+        let pharmacyInfo = document.createElement('p');
+        let pharmacyNote = document.createElement('p');
         underlineU.textContent = pharmacy[i].properties.name;
         pharmacyName.setAttribute('href', 'https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
         pharmacyInfo.textContent =
@@ -218,11 +215,11 @@ var greyIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-$(document).ready(function() {
-  $('.top').click(function() {
-		event.preventDefault();
-		$('html,body').animate({scrollTop:0}, 1000);
-	});
+$(document).ready(function () {
+  $('.top').click(function () {
+    event.preventDefault();
+    $('html,body').animate({ scrollTop: 0 }, 1000);
+  });
 });
 // 如何改成原生JS?
 
