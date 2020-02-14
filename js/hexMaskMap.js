@@ -100,14 +100,11 @@ if (navigator.geolocation) {
       //  - Date() 日期語法
       var d = new Date();
       var EvenOdd = ["奇數", "偶數", "奇偶數"];
-      console.log(d.getDay());
       if (d.getDay() == 1 || 3 || 5) {
         document.getElementById('EvenOdd').textContent = EvenOdd[0];
-      }
-      if (d.getDay() == 2 || 4 || 6) {
+      }else if (d.getDay() == 2 || 4 || 6) {
         document.getElementById('EvenOdd').textContent = EvenOdd[1];
-      }
-      if (d.getDay() == 0) {
+      }else  if (d.getDay() == 0) {
         document.getElementById('EvenOdd').textContent = EvenOdd[2];
       }
       
@@ -127,7 +124,7 @@ if (navigator.geolocation) {
         document.getElementById('child').classList.add('bg-warning', 'mask__warning')
       }
       document.getElementById('address').textContent = pharmacy[0].properties.address;
-      document.getElementById('addressLink').setAttribute('href', 'http://maps.google.com/maps?q=' +pharmacy[0].properties.address);
+      document.getElementById('addressLink').setAttribute('href', 'http://maps.google.com/maps?q=' + pharmacy[0].properties.address);
       document.getElementById('phone').textContent = pharmacy[0].properties.phone;
       document.getElementById('phoneLink').setAttribute('href', 'tel:' + pharmacy[0].properties.phone);
       document.getElementById('updated').textContent = pharmacy[0].properties.updated;
@@ -147,7 +144,7 @@ if (navigator.geolocation) {
         var pharmacyInfo = document.createElement('p');
         var pharmacyService_note = document.createElement('p');
         underlineU.textContent = pharmacy[i].properties.name;
-        pharmacyName.setAttribute('href','https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
+        pharmacyName.setAttribute('href', 'https://www.google.com.tw/maps/?q=' + pharmacy[i].properties.address);
         pharmacyInfo.textContent =
           "成人 : " + pharmacy[i].properties.mask_adult + "  " +
           "兒童 : " + pharmacy[i].properties.mask_child;
