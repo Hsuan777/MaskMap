@@ -39,15 +39,15 @@ if (navigator.geolocation) {
     var pharmacy = [];
     var km = 5;
     var maskQty = "";
-    // ‧如何讓資料重跑?
-    
+    // ? 如何讓資料重跑?
+
     // var maskQty__web = document.getElementById('maskQty__web');
     // var overfifty = document.getElementById('overfifty');
     // overfifty.addEventListener('click', function () {
     //   maskQty__web.textContent = "大於 '50'片";
     //   maskQty = 50;
     // }, false);
-    
+
 
     //‧撈取跨網域 JSON資料
     var xhr = new XMLHttpRequest();
@@ -57,7 +57,7 @@ if (navigator.geolocation) {
       //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
-      
+
       var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
       for (let i = 0; i < data.length; i++) {
         //‧判斷數量更改顏色
@@ -85,7 +85,7 @@ if (navigator.geolocation) {
                 + data[i].properties.mask_child
                 + "<br>" + "備註 : "
                 + data[i].properties.note
-          ));
+              ));
         //‧計算距離
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
 
@@ -178,11 +178,15 @@ if (navigator.geolocation) {
         pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyInfo).classList.add('m-0');
         pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyNote);
       }
+      
+
     }
   }
 
   //‧跟使用者拿所在位置的權限
   navigator.geolocation.getCurrentPosition(success, error);
+
+
 
 } else {
   alert('Sorry, 你的裝置不支援地理位置功能。')
