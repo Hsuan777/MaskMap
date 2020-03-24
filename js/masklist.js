@@ -62,7 +62,7 @@ xhr.onload = function () {
         mask__Child.innerHTML      = '兒童'+'<br>'+ data[i].properties.mask_child;
         mask__Address.innerHTML    = '<span class="material-icons mr-1">place</span>'+  data[i].properties.address;
         mask__Phone.innerHTML      = '<span class="material-icons">phonelink_ring</span>' + data[i].properties.phone;
-        mask__Updated.innerHTML    = '<span class="material-icons mr-1">update</span>' + data[i].properties.updated;
+        mask__Updated.innerHTML    = '<span class="material-icons mr-1cd">update</span>' + data[i].properties.updated;
         mask__Note.innerHTML     = '<span class="material-icons">event_note</span>' + data[i].properties.note;
 
         col.classList.add('col-6', 'col-md-4', 'mb-3', 'js-col');
