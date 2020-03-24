@@ -2,16 +2,16 @@ var xhr = new XMLHttpRequest();
 xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
 xhr.send(null);
 xhr.onload = function () {
-  var data = JSON.parse(xhr.responseText).features;
-  var county = document.getElementById('county');
-  var town = document.getElementById('town');
-  // var pharmacyList = document.querySelector(".js-pharmacyList");
+  var data     = JSON.parse(xhr.responseText).features;
+  var county   = document.getElementById('county');
+  var town     = document.getElementById('town');
+  var quantity = document.getElementById('quantity');
 
 
   // 功能 -> 列出所有縣市
   countyF();
 
-  // 事件 -> 所選值改變時，連帶變更資料
+  // 事件 -> 縣市 所選值改變時，連帶變更資料
   county.addEventListener('change', function (e) {
     var selectTown = document.querySelectorAll(".select__town");
     for (i = 0; i < selectTown.length; i++) {
@@ -24,6 +24,7 @@ xhr.onload = function () {
     }
     townF(e.target.value);
   });
+  // 事件 -> 區鄉鎮 所選值改變時，連帶變更資料
   town.addEventListener('change', function (e) {
     var pharmacyRow = document.querySelector('.js-pharmacyList');
     var jsCol = document.querySelectorAll(".js-col");
@@ -34,22 +35,22 @@ xhr.onload = function () {
 
   });
 
+  // 事件 -> 數量排序 所選值改變時，連帶變更資料
+  quantity.addEventListener('change', function (e) {
+    console.log(e.target.selected);
+  });
+
   function pharmacyList(name) {
     var pharmacyRow = document.querySelector('.js-pharmacyList');
     for (i = 0; i < data.length; i++) {
-      if (name === data[i].properties.town) {
+      if (name === data[i].properties.town && data[i].properties.mask_adult !== 0) {
 
-        // var li = document.createElement('li');
-        // li.classList.add('js-li');
-        // li.textContent = data[i].properties.name;
-        // pharmacyUl.appendChild(li);
-        // console.log(data[i].properties.town);
         var col            = document.createElement('div');
         var card           = document.createElement('div');
         var flex           = document.createElement('div');
         var mask__Pharmacy = document.createElement('h4');
-        var mask__Adult    = document.createElement('h4');
-        var mask__Child    = document.createElement('h4');
+        var mask__Adult    = document.createElement('h6');
+        var mask__Child    = document.createElement('h6');
         var mask__Address  = document.createElement('a');
         var mask__Phone    = document.createElement('a');
         var mask__Updated  = document.createElement('p');
@@ -57,7 +58,6 @@ xhr.onload = function () {
 
 
         mask__Pharmacy.textContent = data[i].properties.name;
-        // mask__Adult.textContent    = '成人'+ data[i].properties.mask_adult;
         mask__Adult.innerHTML      = '成人'+'<br>'+ data[i].properties.mask_adult;
         mask__Child.innerHTML      = '兒童'+'<br>'+ data[i].properties.mask_child;
         mask__Address.innerHTML    = '<span class="material-icons mr-1">place</span>'+  data[i].properties.address;
@@ -77,8 +77,8 @@ xhr.onload = function () {
         mask__Note.classList.add('d-flex', 'align-items-start');
 
 
-        mask__Adult.classList.add('p-3','h3','text-white','rounded');
-        mask__Child.classList.add('p-3','h3','text-white','rounded');
+        mask__Adult.classList.add('p-3','h3','text-white','rounded','text-nowrap');
+        mask__Child.classList.add('p-3','h3','text-white','rounded','text-nowrap');
         if (data[i].properties.mask_adult === 0) {
           mask__Adult.classList.add('bg-zero', 'mask__quantity', 'mask__zero')
         }else if(data[i].properties.mask_adult <= 50){
@@ -104,9 +104,6 @@ xhr.onload = function () {
         card.appendChild(mask__Phone);
         card.appendChild(mask__Updated);
         card.appendChild(mask__Note);
-
-        
-        // document.getElementById('note').textContent = data[i].properties.note;
       }
     }
   }

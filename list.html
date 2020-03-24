@@ -113,37 +113,55 @@
           </a>
         </div>
 
-        <!-- 選擇 縣市 -->
-        <select name="" id="county">
-          <option value="" selected>請選擇縣市</option>
-        </select>
-        <!-- 選擇 區、鄉、鎮 -->
-        <select name="" id="town">
-          <option value="" selected>請選擇區鄉鎮</option>
-        </select>
+
+
 
 
         <!-- TODO:增加篩選條件與標籤，點選後篩選 -->
         <!-- ‧篩選條件說明 -->
-        <div class="d-flex pl-4 mt-5">
-          <ul class="pl-0">
-            <li>
-              <small>距離方圓 '5公里'</small>
+        <div class=" d-flex justify-content-between align-items-start">
+          <ul class="list-unstyled ">
+            <li class="mb-3">
+              <!-- 選擇 縣市 -->
+              縣&emsp;&emsp;市 : 
+              <select name="" id="county">
+                <option value="" selected>請選擇縣市</option>
+              </select>
+            </li>
+            <li class="mb-3">
+              <!-- 選擇 區、鄉、鎮 -->
+              區&ensp;鄉&ensp;鎮 : 
+              <select name="" id="town">
+                <option value="" selected>請選擇區鄉鎮</option>
+              </select>
+            </li>
+            <li class="mb-3">
+              <!-- 選擇 距離 -> 離自身範圍最近 -->
+              距&emsp;&emsp;離 :
+              <select name="" id="">
+                <option value="5" selected>5 KM</option>
+                <option value="10" >10 KM</option>
+                <option value="20" >20 KM</option>
+              </select>
+            </li>
+            <li class="mb-3">
+              <!-- 選擇 數量 -->
+              數量排序 :
+              <select name="" id="quantity">
+                <option value="0" selected>最多</option>
+                <option value="1" >最少</option>
+              </select>
             </li>
             <li>
-              <small>成人口罩 '最多' TOP</small>
-            </li>
-            <li>
-              <small>大於 '0' 片</small>
+              
             </li>
 
           </ul>
-          <button type="button" class="btn btn-outline-primary rounded-pill px-3 ml-auto align-self-center mt-3"
-            onclick="location.reload();">
+          <button type="button" class="btn btn-outline-primary rounded-pill px-3  " onclick="location.reload();">
             重整列表
           </button>
         </div>
-        
+
       </div>
 
       <!-- 藥局資料 -->
@@ -192,7 +210,7 @@
             </div>
           </div> -->
         </div>
-        
+
 
 
 
