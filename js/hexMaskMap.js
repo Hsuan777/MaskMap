@@ -17,7 +17,6 @@ if (navigator.geolocation) {
     //  - leaflet框架，想像成一個無任何資訊的大平地 
     //  - 參數參考 https://leafletjs.com/reference-1.6.0.html
     var map = L.map('map', {
-
       center: [position.coords.latitude, position.coords.longitude],
       zoom: 13
     });
@@ -49,18 +48,20 @@ if (navigator.geolocation) {
     // }, false);
 
 
-    //‧撈取跨網域 JSON資料
+    // 取得 -> 撈取跨網域 JSON資料
     var xhr = new XMLHttpRequest();
     xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
     xhr.send(null);
     xhr.onload = function () {
-      //‧抓取 JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
+      // 取得 -> JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
 
+      // 取得 - > 使用者目前位置
       var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+
+      // 判斷 -> 數量對應顏色
       for (let i = 0; i < data.length; i++) {
-        //‧判斷數量更改顏色
         var mask = "";
         if (data[i].properties.mask_adult == 0) {
           mask = greyIcon;
@@ -86,11 +87,12 @@ if (navigator.geolocation) {
                 + "<br>" + "備註 : "
                 + data[i].properties.note
               ));
-        //‧計算距離
+        // 取得 -> 藥局與使用者之"距離"
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
 
-        //。撈取每筆資料至地圖時，順道篩選顯示條件
-        if (distance <= km & data[i].properties.mask_adult > maskQty) {
+        // 判斷 -> 小於設定距離(km) 且 口罩數量大於設定數量 為 true，push至要顯示的陣列
+        // TODO: 直接撈取並判斷後，執行函數會不會是一樣的?
+        if (distance <= km && data[i].properties.mask_adult > maskQty) {
           pharmacy.push(data[i]);
         }
       }
@@ -132,11 +134,12 @@ if (navigator.geolocation) {
       //   EvenOdd.textContent = userEvenOdd[2]
       // )
 
-      //‧自身與藥局距離
+      // TODO: 資料重複取得
+      // 取得 -> 自身與藥局距離
       var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
       nearDistance = nearDistance.toFixed(1);
 
-      //‧其他資訊
+      // 組字串 -> 藥局名稱、距離、口罩數量、地址、電話號碼、更新時間、備註
       document.getElementById('mask_pharmacy').textContent = pharmacy[0].properties.name;
       document.getElementById('nearDistance').textContent = nearDistance + "公里";
       document.getElementById('mask_adult').textContent = pharmacy[0].properties.mask_adult;

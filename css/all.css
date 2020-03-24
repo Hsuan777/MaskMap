@@ -11044,8 +11044,8 @@ body {
 }
 
 .mask__quantity {
-  min-width: 160px;
-  max-height: 110px;
+  max-width: 100%;
+  min-width: 80px;
   position: relative;
 }
 
@@ -11056,8 +11056,11 @@ body {
   height: 50px;
   bottom: 0;
   right: 0;
-  background-image: url("../img/ic_stock_full@2x.png");
   z-index: 9;
+}
+
+.mask__success::after {
+  background-image: url("../img/ic_stock_full@2x.png");
 }
 
 .mask__warning::after {

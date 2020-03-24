@@ -5,7 +5,7 @@ xhr.onload = function () {
   var data = JSON.parse(xhr.responseText).features;
   var county = document.getElementById('county');
   var town = document.getElementById('town');
-  var pharmacyUl = document.querySelector(".js-pharmacyList");
+  // var pharmacyList = document.querySelector(".js-pharmacyList");
 
 
   // 功能 -> 列出所有縣市
@@ -17,33 +17,91 @@ xhr.onload = function () {
     for (i = 0; i < selectTown.length; i++) {
       town.removeChild(selectTown[i]);
     }
-    var liAll = document.querySelectorAll(".js-li");
-    for (i = 0; i < liAll.length; i++) {
-      
-      pharmacyUl.removeChild(liAll[i]);
+    var pharmacyRow = document.querySelector('.js-pharmacyList');
+    var jsCol = document.querySelectorAll(".js-col");
+    for (i = 0; i < jsCol.length; i++) {
+      pharmacyRow.removeChild(jsCol[i]);
     }
     townF(e.target.value);
   });
   town.addEventListener('change', function (e) {
-    var liAll = document.querySelectorAll(".js-li");
-    for (i = 0; i < liAll.length; i++) {
-      
-      pharmacyUl.removeChild(liAll[i]);
+    var pharmacyRow = document.querySelector('.js-pharmacyList');
+    var jsCol = document.querySelectorAll(".js-col");
+    for (i = 0; i < jsCol.length; i++) {
+      pharmacyRow.removeChild(jsCol[i]);
     }
     pharmacyList(e.target.value);
 
   });
 
   function pharmacyList(name) {
-
+    var pharmacyRow = document.querySelector('.js-pharmacyList');
     for (i = 0; i < data.length; i++) {
       if (name === data[i].properties.town) {
 
-        var li = document.createElement('li');
-        li.classList.add('js-li');
-        li.textContent = data[i].properties.name;
-        pharmacyUl.appendChild(li);
-        console.log(data[i].properties.town);
+        // var li = document.createElement('li');
+        // li.classList.add('js-li');
+        // li.textContent = data[i].properties.name;
+        // pharmacyUl.appendChild(li);
+        // console.log(data[i].properties.town);
+        var col            = document.createElement('div');
+        var card           = document.createElement('div');
+        var flex           = document.createElement('div');
+        var mask__Pharmacy = document.createElement('h4');
+        var mask__Adult    = document.createElement('h4');
+        var mask__Child    = document.createElement('h4');
+        var mask__Address  = document.createElement('a');
+        var mask__Phone    = document.createElement('a');
+        var mask__Updated  = document.createElement('p');
+        var mask__Note     = document.createElement('p');
+
+
+        mask__Pharmacy.textContent = data[i].properties.name;
+        // mask__Adult.textContent    = '成人'+ data[i].properties.mask_adult;
+        mask__Adult.innerHTML    = '成人'+'<br>'+ data[i].properties.mask_adult;
+        mask__Child.innerHTML    = '兒童'+'<br>'+ data[i].properties.mask_child;
+        mask__Address.textContent    =  data[i].properties.address;
+        mask__Phone.textContent      =  data[i].properties.phone;
+        mask__Updated.textContent    =  data[i].properties.updated;
+        mask__Note.textContent       =  data[i].properties.note;
+
+        col.classList.add('col-6', 'col-md-4', 'mb-3', 'js-col');
+        card.classList.add('card','p-2');
+        flex.classList.add('d-flex', 'justify-content-around', );
+        mask__Pharmacy.classList.add('text-center','font-weight-bold','mt-2' );
+        mask__Address.setAttribute('href', 'http://maps.google.com/maps?q=' + data[i].properties.address);
+        mask__Phone.setAttribute('href', 'tel:' + data[i].properties.phone);
+
+        mask__Adult.classList.add('p-3','h3','text-white','rounded');
+        mask__Child.classList.add('p-3','h3','text-white','rounded');
+        if (data[i].properties.mask_adult === 0) {
+          mask__Adult.classList.add('bg-zero', 'mask__quantity', 'mask__zero')
+        }else if(data[i].properties.mask_adult <= 50){
+          mask__Adult.classList.add('bg-warning', 'mask__quantity', 'mask__warning')
+        }else if(data[i].properties.mask_adult > 50){
+          mask__Adult.classList.add('bg-success', 'mask__quantity', 'mask__success')
+        }
+        if (data[i].properties.mask_child === 0) {
+          mask__Child.classList.add('bg-zero', 'mask__quantity', 'mask__zero')
+        }else if(data[i].properties.mask_child <= 50){
+          mask__Child.classList.add('bg-warning', 'mask__quantity', 'mask__warning')
+        }else if(data[i].properties.mask_child > 50){
+          mask__Child.classList.add('bg-success', 'mask__quantity', 'mask__success')
+        }
+        
+
+        pharmacyRow.appendChild(col).appendChild(card);
+        card.appendChild(flex);
+        flex.appendChild(mask__Adult);
+        flex.appendChild(mask__Child);
+        card.appendChild(mask__Pharmacy);
+        card.appendChild(mask__Address);
+        card.appendChild(mask__Phone);
+        card.appendChild(mask__Updated);
+        card.appendChild(mask__Note);
+
+        
+        // document.getElementById('note').textContent = data[i].properties.note;
       }
     }
   }
@@ -86,3 +144,21 @@ xhr.onload = function () {
 }
 
 
+// 取得 + 判斷  -> 奇偶數
+var d = new Date();
+EvenOdd = document.getElementById('EvenOdd');
+switch (d.getDay()) {
+  case 1:
+  case 3:
+  case 5:
+    EvenOdd.textContent = "奇數"
+    break;
+  case 2:
+  case 4:
+  case 6:
+    EvenOdd.textContent = "偶數"
+    break;
+  case 0:
+    EvenOdd.textContent = "奇偶數"
+    break;
+}
