@@ -58,19 +58,24 @@ xhr.onload = function () {
 
         mask__Pharmacy.textContent = data[i].properties.name;
         // mask__Adult.textContent    = '成人'+ data[i].properties.mask_adult;
-        mask__Adult.innerHTML    = '成人'+'<br>'+ data[i].properties.mask_adult;
-        mask__Child.innerHTML    = '兒童'+'<br>'+ data[i].properties.mask_child;
-        mask__Address.textContent    =  data[i].properties.address;
-        mask__Phone.textContent      =  data[i].properties.phone;
-        mask__Updated.textContent    =  data[i].properties.updated;
-        mask__Note.textContent       =  data[i].properties.note;
+        mask__Adult.innerHTML      = '成人'+'<br>'+ data[i].properties.mask_adult;
+        mask__Child.innerHTML      = '兒童'+'<br>'+ data[i].properties.mask_child;
+        mask__Address.innerHTML    = '<span class="material-icons mr-1">place</span>'+  data[i].properties.address;
+        mask__Phone.innerHTML      = '<span class="material-icons">phonelink_ring</span>' + data[i].properties.phone;
+        mask__Updated.innerHTML    = '<span class="material-icons mr-1">update</span>' + data[i].properties.updated;
+        mask__Note.innerHTML     = '<span class="material-icons">event_note</span>' + data[i].properties.note;
 
         col.classList.add('col-6', 'col-md-4', 'mb-3', 'js-col');
-        card.classList.add('card','p-2');
+        card.classList.add('card','p-1');
         flex.classList.add('d-flex', 'justify-content-around', );
         mask__Pharmacy.classList.add('text-center','font-weight-bold','mt-2' );
+        mask__Address.classList.add('d-flex', 'align-items-start');
         mask__Address.setAttribute('href', 'http://maps.google.com/maps?q=' + data[i].properties.address);
+        mask__Phone.classList.add('d-flex', 'align-items-center','ml-1','my-2');
         mask__Phone.setAttribute('href', 'tel:' + data[i].properties.phone);
+        mask__Updated.classList.add('d-flex', 'align-items-center');
+        mask__Note.classList.add('d-flex', 'align-items-start');
+
 
         mask__Adult.classList.add('p-3','h3','text-white','rounded');
         mask__Child.classList.add('p-3','h3','text-white','rounded');
