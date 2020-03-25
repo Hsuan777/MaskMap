@@ -8,18 +8,21 @@ xhr.onload = function () {
   var town = document.getElementById('town');
   var quantity = document.getElementById('quantity');
   var townName = '';
+
+  // 預設
+  // - 數量大於零
+  // - 排序 多 ->少
+  // - 列出所有縣市
+  // - "未選"區鄉鎮 -> 不顯示
   quantityMask(0);
-  quantity.classList.add('d-none');
-
-
-
-  // 數量預設從 多 ->少 排序
   data.sort(function (a, b) {
     return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
   });
-
-  // 功能 -> 列出所有縣市
   countyF();
+  quantity.classList.add('d-none');
+  
+ 
+  
 
   // 事件 -> 縣市 所選值改變時，連帶變更資料
   county.addEventListener('change', function (e) {
@@ -81,7 +84,7 @@ xhr.onload = function () {
         mask__Updated.innerHTML = '<span class="material-icons mr-1cd">update</span>' + data[i].properties.updated;
         mask__Note.innerHTML = '<span class="material-icons">event_note</span>' + data[i].properties.note;
 
-        col.classList.add('col-6', 'col-md-4', 'mb-3', 'js-col');
+        col.classList.add('col', 'col-md-4', 'mb-3', 'js-col');
         card.classList.add('card', 'p-1');
         flex.classList.add('d-flex', 'justify-content-around');
         mask__Pharmacy.classList.add('text-center', 'font-weight-bold', 'mt-2');
@@ -93,7 +96,7 @@ xhr.onload = function () {
         mask__Note.classList.add('d-flex', 'align-items-start');
 
 
-        mask__Adult.classList.add('p-3', 'h3', 'text-white', 'rounded', 'text-nowrap');
+        mask__Adult.classList.add('p-3', 'h3', 'text-white', 'rounded', 'text-nowrap','mr-1');
         mask__Child.classList.add('p-3', 'h3', 'text-white', 'rounded', 'text-nowrap');
         if (data[i].properties.mask_adult === 0) {
           mask__Adult.classList.add('bg-zero', 'mask__quantity', 'mask__zero')
