@@ -54,6 +54,9 @@ body {
 .logo{
   @include hidden_text(30px,30px,url("../img/logo.png"))
 }
+.pharmacyList{
+  width: 250px;
+}
 .mask{
   &__quantity{
     max-width:100% ;
@@ -94,10 +97,4 @@ body {
 }
 #map{
   z-index: 1;
-}
-.top{
-  position: fixed;
-  z-index: 99;
-  bottom: 100px;
-  right: 25px;
 }

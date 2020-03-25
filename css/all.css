@@ -11043,6 +11043,10 @@ body {
   background-repeat: no-repeat;
 }
 
+.pharmacyList {
+  width: 250px;
+}
+
 .mask__quantity {
   max-width: 100%;
   width: 150px;
@@ -11088,9 +11092,11 @@ body {
 }
 
 .top {
+  border: 0px;
+  background-color: rgba(95, 93, 91, 0.5);
   position: fixed;
   z-index: 99;
-  bottom: 100px;
+  bottom: 25px;
   right: 25px;
 }
 /*# sourceMappingURL=all.css.map */

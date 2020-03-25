@@ -1,11 +1,8 @@
-//。事件  
-//  -說明 
-//‧任務
-//  -說明 
+
 
 //。確認使用者允許所在位置，開始事件
-//  -先確認使用者裝置能不能抓地點
-//  -感謝作者分享 https://letswrite.tw/google-map-api-distance-matrix/
+//  - 先確認使用者裝置能不能抓地點
+//  - 參考 https://letswrite.tw/google-map-api-distance-matrix/
 if (navigator.geolocation) {
   //‧使用者不提供權限，或是發生其它錯誤
   function error() {
@@ -34,18 +31,8 @@ if (navigator.geolocation) {
     //‧使用者為中心，方圓 5公里視覺化
     L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
 
-    //‧篩選條件
-    var pharmacy = [];
-    var km = 5;
-    var maskQty = "";
-    // ? 如何讓資料重跑?
 
-    // var maskQty__web = document.getElementById('maskQty__web');
-    // var overfifty = document.getElementById('overfifty');
-    // overfifty.addEventListener('click', function () {
-    //   maskQty__web.textContent = "大於 '50'片";
-    //   maskQty = 50;
-    // }, false);
+
 
 
     // 取得 -> 撈取跨網域 JSON資料
@@ -56,6 +43,11 @@ if (navigator.geolocation) {
       // 取得 -> JSON內的 features陣列資料，因瀏覽器傳遞的是字串，故需 parse
       //  -不一定所有 JSON內的陣列取名都一樣
       var data = JSON.parse(xhr.responseText).features;
+
+      //‧篩選條件
+      var pharmacy = [];
+      var km = 5;
+      var maskQty = "";
 
       // 取得 - > 使用者目前位置
       var location_latlng = L.latLng(position.coords.latitude, position.coords.longitude);
@@ -91,51 +83,20 @@ if (navigator.geolocation) {
         var distance = location_latlng.distanceTo(L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])) / 1000;
 
         // 判斷 -> 小於設定距離(km) 且 口罩數量大於設定數量 為 true，push至要顯示的陣列
-        // TODO: 直接撈取並判斷後，執行函數會不會是一樣的?
         if (distance <= km && data[i].properties.mask_adult > maskQty) {
           pharmacy.push(data[i]);
         }
       }
       map.addLayer(markers);
 
+
+
       //‧篩選原始資料後排序，最多 -> 最少
       pharmacy = pharmacy.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
       });
 
-
-      //。回寫資料到網頁
-      //‧抓日期 -> 判斷星期幾與周日
-      //  - Date() 日期語法
-      var d = new Date();
-      EvenOdd = document.getElementById('EvenOdd');
-      switch (d.getDay()) {
-        case 1:
-        case 3:
-        case 5:
-          EvenOdd.textContent = "奇數"
-          break;
-        case 2:
-        case 4:
-        case 6:
-          EvenOdd.textContent = "偶數"
-          break;
-        case 0:
-          EvenOdd.textContent = "奇偶數"
-          break;
-      }
-      //  - if else 寫法
-      // var userEvenOdd = ["奇數", "偶數", "奇偶數"];
-      // if (d.getDay() == 1 || 3 || 5) {
-      //   EvenOdd.textContent = userEvenOdd[0];
-      // }else if (d.getDay() == 2 || 4 || 6) {
-      //   EvenOdd.textContent = userEvenOdd[1];
-      // }else(
-      //   EvenOdd.textContent = userEvenOdd[2]
-      // )
-
-      // TODO: 資料重複取得
-      // 取得 -> 自身與藥局距離
+      // 取得 ->  自身與條件篩選後之藥局距離
       var nearDistance = location_latlng.distanceTo(L.latLng(pharmacy[0].geometry.coordinates[1], pharmacy[0].geometry.coordinates[0])) / 1000;
       nearDistance = nearDistance.toFixed(1);
 
@@ -181,7 +142,7 @@ if (navigator.geolocation) {
         pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyInfo).classList.add('m-0');
         pharmacyList.appendChild(pharmacyLi).appendChild(pharmacyNote);
       }
-      
+
 
     }
   }
@@ -228,7 +189,38 @@ $(document).ready(function () {
     $('html,body').animate({ scrollTop: 0 }, 1000);
   });
 });
-// 如何改成原生JS?
+
+
+
+//。回寫資料到網頁
+//‧抓日期 -> 判斷星期幾與周日
+//  - Date() 日期語法
+var d = new Date();
+EvenOdd = document.getElementById('EvenOdd');
+switch (d.getDay()) {
+  case 1:
+  case 3:
+  case 5:
+    EvenOdd.textContent = "奇數"
+    break;
+  case 2:
+  case 4:
+  case 6:
+    EvenOdd.textContent = "偶數"
+    break;
+  case 0:
+    EvenOdd.textContent = "奇偶數"
+    break;
+}
+//  - if else 寫法
+// var userEvenOdd = ["奇數", "偶數", "奇偶數"];
+// if (d.getDay() == 1 || 3 || 5) {
+//   EvenOdd.textContent = userEvenOdd[0];
+// }else if (d.getDay() == 2 || 4 || 6) {
+//   EvenOdd.textContent = userEvenOdd[1];
+// }else(
+//   EvenOdd.textContent = userEvenOdd[2]
+// )
 
 
 

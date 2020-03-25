@@ -120,7 +120,7 @@
         <!-- TODO:增加篩選條件與標籤，點選後篩選 -->
         <!-- ‧篩選條件說明 -->
         <div class=" d-flex justify-content-between align-items-start">
-          <ul class="list-unstyled ">
+          <ul class="list-unstyled pharmacyList">
             <li class="mb-3">
               <!-- 選擇 縣市 -->
               縣&emsp;&emsp;市 : 
@@ -155,21 +155,19 @@
                 <option value="300" >大於 300 </option>
               </select>
             </li>
-            <li>
-              
-            </li>
+            
 
           </ul>
           <button type="button" class="btn btn-outline-primary rounded-pill px-3  " onclick="location.reload();">
             重整列表
           </button>
         </div>
-
+        <div class="row js-pharmacyList"></div>
       </div>
 
       <!-- 藥局資料 -->
       <div class="col-lg-9">
-        <div class="row js-pharmacyList">
+        <div class="row ">
           <!-- <div class="col-6 col-md-3 col-lg-4">
             <div class="card p-3">
               <div class="d-flex justify-content-around">
@@ -213,17 +211,11 @@
             </div>
           </div> -->
         </div>
-
-
-
-
-        <ul class="unstyle js-pharmacyList">
-        </ul>
       </div>
     </div>
   </div>
 
-  <button type="button" class="btn btn-primary rounded-circle py-3 top">TOP</button>
+  <button type="button" class="btn btn-primary rounded-circle py-3  top">TOP</button>
 
   <footer class=" p-3 bg-primary">
     <h4 class="text-white">防疫專線 1922 | 口罩資訊 1911</h4>
