@@ -125,7 +125,6 @@ if (navigator.geolocation) {
       //‧增加其他藥局清單
       pharmacyList = document.getElementById('pharmacyList');
       for (let i = 1; i < pharmacy.length; i++) {
-        // TODO:優化字串組合
         let pharmacyLi = document.createElement('li');
         let pharmacyName = document.createElement('a');
         let underlineU = document.createElement('u');

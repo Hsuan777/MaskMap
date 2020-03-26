@@ -7,11 +7,13 @@ xhr.onload = function () {
   var county = document.getElementById('county');
   var town = document.getElementById('town');
   var quantity = document.getElementById('quantity');
+  // TODO:如何取得目前區域 ?
   var townName = '';
+  var quantityRecord ='';
   var locationUser = '';
 
   // 預設
-  // - 成人口罩數量大於零
+  // - 成人口罩數量大於零，由這個函數篩選 data資料
   // - 排序 多 ->少
   // - 列出所有縣市
   // - "未選"區鄉鎮 -> 不顯示
@@ -20,8 +22,8 @@ xhr.onload = function () {
     return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
   });
   countyF();
-  quantity.classList.add('d-none');
   scrollFunction();
+  // quantity.classList.add('d-none');
 
 
 
@@ -31,30 +33,52 @@ xhr.onload = function () {
     for (i = 0; i < selectTown.length; i++) {
       town.removeChild(selectTown[i]);
     }
-    quantity.classList.remove('d-inline');
-    quantity.classList.add('d-none');
+    // quantity.classList.remove('d-inline');
+    // quantity.classList.add('d-none');
     clearPharmacyData();
     townF(this.value);
   });
   // 事件 -> 區鄉鎮 所選值改變時，連帶變更資料
   town.addEventListener('change', function (e) {
     townName = this.value;
-    quantity.classList.add('d-inline');
+    // quantity.classList.add('d-inline');
     clearPharmacyData();
     pharmacyList(this.value);
   });
 
   // 事件 -> 數量排序 所選值改變時，連帶變更資料
   quantity.addEventListener('change', function (e) {
+
     data = [];
     // console.log(typeof(this.value)); -> 類型為字串
     quantityMask(parseInt(this.value));
+    quantityRecord = parseInt(this.value);
     data.sort(function (a, b) {
       return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
     });
-
     clearPharmacyData();
     pharmacyList(townName);
+    distance.checked=false;
+  });
+  distance.addEventListener('change', function () {
+    console.log(this.checked);
+    if (this.checked == true){
+      data = [];
+      quantityMask(quantityRecord);
+      data.sort(function (a, b) {
+        return a.geometry.distance > b.geometry.distance ? 1 : -1;
+      });
+      clearPharmacyData();
+      pharmacyList(townName);
+    }else{
+      data = [];
+      quantityMask(quantityRecord);
+      data.sort(function (a, b) {
+        return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
+      });    
+      clearPharmacyData();
+      pharmacyList(townName);
+    }
   });
 
 
@@ -62,6 +86,7 @@ xhr.onload = function () {
   function pharmacyList(name) {
     var pharmacyRow = document.querySelector('.js-pharmacyList');
     for (i = 0; i < data.length; i++) {
+
       if (name === data[i].properties.town) {
         var col = document.createElement('div');
         var card = document.createElement('div');
@@ -167,12 +192,15 @@ xhr.onload = function () {
     }
   }
 
+
   // 功能 -> 選擇要顯示的口罩數量
   function quantityMask(num) {
     for (i = 0; i < originalData.length; i++) {
+
       if (originalData[i].properties.mask_adult >= num) {
         data.push(originalData[i]);
       }
+
     }
   }
 
@@ -182,6 +210,14 @@ xhr.onload = function () {
     function success(position) {
       // 取得使用者位置
       locationUser = L.latLng(position.coords.latitude, position.coords.longitude);
+
+      // 取得 -> 使用者與藥局距離並加入原始資料中
+      for (i = 0; i < originalData.length; i++) {
+        originalData[i].geometry.distance = parseInt((locationUser.distanceTo(
+          L.latLng(originalData[i].geometry.coordinates[1], originalData[i].geometry.coordinates[0])
+        ) / 1000).toFixed(1));
+      }
+
 
       // 設定 -> leaflet參數 
       // - center 定位
@@ -345,3 +381,16 @@ function topFunction(scrollNumber) {
 // - 但為了組字串方便而混用，在多數情況下，較推薦使用哪一種方式組字串呢 ?
 
 
+// ? 問題 
+// - 排序皆由數量多到少 -> 數量排序與距離排序擇一
+// - 條件一:數量、條件二:距離
+// - 單一篩選 數量
+// - 單一篩選 距離
+// - 多重條件篩選 數量(0、50、100) && 距離(5、10、20、不選)
+// - 如何"取得"未觸發 change事件所選值
+// - 若已觸發則如何保留所選值，然後綜合其他所選條件再去做行為
+// - 不選如何寫"判斷"
+
+// ? 問題 
+// - 中心點如何增加大頭針 ?
+// - 點選 || hover 該藥局後，地圖移動至該座標並顯示大頭針
