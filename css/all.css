@@ -10985,8 +10985,9 @@ body {
 }
 
 #map {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  height: 800px;
+  z-index: 1;
 }
 
 /* 借用一下，測試 */
@@ -11085,10 +11086,6 @@ body {
 
 .mask__zero::after {
   background-image: url("../img/ic_stock_none@2x.png");
-}
-
-#map {
-  z-index: 1;
 }
 
 .top {

@@ -11,7 +11,7 @@ xhr.onload = function () {
   var locationUser = '';
 
   // 預設
-  // - 數量大於零
+  // - 成人口罩數量大於零
   // - 排序 多 ->少
   // - 列出所有縣市
   // - "未選"區鄉鎮 -> 不顯示
@@ -21,7 +21,7 @@ xhr.onload = function () {
   });
   countyF();
   quantity.classList.add('d-none');
-
+  scrollFunction();
 
 
 
@@ -34,27 +34,27 @@ xhr.onload = function () {
     quantity.classList.remove('d-inline');
     quantity.classList.add('d-none');
     clearPharmacyData();
-    townF(e.target.value);
+    townF(this.value);
   });
   // 事件 -> 區鄉鎮 所選值改變時，連帶變更資料
   town.addEventListener('change', function (e) {
-    townName = e.target.value;
+    townName = this.value;
     quantity.classList.add('d-inline');
     clearPharmacyData();
-    pharmacyList(e.target.value);
+    pharmacyList(this.value);
   });
 
   // 事件 -> 數量排序 所選值改變時，連帶變更資料
   quantity.addEventListener('change', function (e) {
     data = [];
-    quantityMask(parseInt(e.target.value));
+    // console.log(typeof(this.value)); -> 類型為字串
+    quantityMask(parseInt(this.value));
     data.sort(function (a, b) {
       return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
     });
 
     clearPharmacyData();
     pharmacyList(townName);
-    console.log(data);
   });
 
 
@@ -74,7 +74,7 @@ xhr.onload = function () {
         var mask__Updated = document.createElement('p');
         var mask__Note = document.createElement('p');
         var mask__Distance = document.createElement('small');
-        
+
 
 
         mask__Pharmacy.textContent = data[i].properties.name;
@@ -86,12 +86,12 @@ xhr.onload = function () {
         mask__Note.innerHTML = '<span class="material-icons">event_note</span>' + data[i].properties.note;
         mask__Distance.textContent = (locationUser.distanceTo(
           L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])
-          ) / 1000).toFixed(1) + 'km';
+        ) / 1000).toFixed(1) + 'km';
 
-        col.classList.add('col', 'col-md-4','col-lg-12', 'mb-3', 'js-col');
+        col.classList.add('col', 'col-md-4', 'col-lg-12', 'mb-3', 'js-col');
         card.classList.add('card', 'p-1');
         flex.classList.add('d-flex', 'justify-content-around');
-        mask__Pharmacy.classList.add('text-center', 'font-weight-bold', 'mt-2','mr-2');
+        mask__Pharmacy.classList.add('text-center', 'font-weight-bold', 'mt-2', 'mr-2');
         mask__Distance.classList.add('ml-2');
         mask__Address.classList.add('d-flex', 'align-items-start');
         mask__Address.setAttribute('href', 'http://maps.google.com/maps?q=' + data[i].properties.address);
@@ -180,7 +180,52 @@ xhr.onload = function () {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(success, error);
     function success(position) {
+      // 取得使用者位置
       locationUser = L.latLng(position.coords.latitude, position.coords.longitude);
+
+      // 設定 -> leaflet參數 
+      // - center 定位
+      // - zoom 縮放等級
+      var map = L.map('map', {
+        center: [position.coords.latitude, position.coords.longitude],
+        zoom: 13
+      });
+
+      // 將 openstreetmap 加入地圖，map 為網頁的 #map
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      // 將每個定點做群組，強化搜尋體驗
+      // - 參考 https://github.com/Leaflet/Leaflet.markercluster
+      var markers = L.markerClusterGroup().addTo(map);
+
+      // 使用者為中心，方圓 5公里視覺化
+      L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
+
+      for (let i = 0; i < data.length; i++) {
+        var mask = "";
+
+        if (data[i].properties.mask_adult == 0) {
+          mask = greyIcon;
+        } else if (data[i].properties.mask_adult < 50) {
+          mask = orangeIcon;
+        } else if (data[i].properties.mask_adult >= 50) {
+          mask = greenIcon;
+        };
+        markers.addLayer(L.marker(
+          [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]],
+          { icon: mask })
+          .bindPopup(data[i].properties.name
+            + "<br>" + "成人口罩 : "
+            + data[i].properties.mask_adult
+            + "<br>" + "兒童口罩 : "
+            + data[i].properties.mask_child
+            + "<br>" + "備註 : "
+            + data[i].properties.note
+          ));
+      }
+      map.addLayer(markers);
     }
     function error() {
       alert('無法取得你的位置');
@@ -220,19 +265,51 @@ switch (d.getDay()) {
     break;
 }
 
+// 取得 -> 使用 ICON 大頭針 
+//  -感謝作者分享 https://github.com/pointhi/leaflet-color-markers
+var greenIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+var orangeIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+var greyIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
-scrollFunction();
+
+
+// 事件 BOM 'onscroll' -> 每當畫面捲動觸發一次 scrollFunction();
+window.onscroll = function () {
+  scrollFunction();
+};
 function scrollFunction() {
   var top = document.querySelector('.top');
 
   // 判斷 -> 若滾動頁面超過 100 ，則顯示
   // - document.documentElement -> <html>, For Chrome, Firefox, IE and Opera
   // - document.body -> <body>, for  Safari
-  // if (window.pageYOffset > 100 || document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-  //   top.style.display = "block";
-  // } else {
-  //   top.style.display = "none";
-  // }
+
+  if (window.pageYOffset > 100 || document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+    top.style.display = "block";
+  } else {
+    top.style.display = "none";
+  }
 
   // 事件 'click' -> 回到頂部
   top.addEventListener('click', function (event) {
@@ -248,3 +325,23 @@ function topFunction(scrollNumber) {
     behavior: "smooth"
   });
 }
+
+// ? 問題 
+// -  this ; e.target 
+// - change事件是相同觸發元素相同目標 ?
+// - ul>li 監聽 ul click事件時，是同一個觸發元素不同目標 ?
+// - 若剛好目標相同，怎樣的情況較適合哪一種 ?
+
+// ? 問題
+// - top.style.display ; top.classList.add('d-block')
+// - style寫在該元素上，classList則是加入 class
+// - 用哪一個比較好? 怎樣的情況適合哪一種 ?
+// - 會因為權重的問題而推薦用 classList ?
+
+// ? 問題
+// - innerHTML ; appendChild() 
+// - innerHTML 會複寫 ;  appendChild()則是往下新增與其他操作
+// - 若跨網域資料有安全性疑慮則不推薦 innerHTML
+// - 但為了組字串方便而混用，在多數情況下，較推薦使用哪一種方式組字串呢 ?
+
+
