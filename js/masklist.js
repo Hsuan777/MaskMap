@@ -7,7 +7,6 @@ xhr.onload = function () {
   var county = document.getElementById('county');
   var town = document.getElementById('town');
   var quantity = document.getElementById('quantity');
-  // TODO:如何取得目前區域 ?
   var townName = '';
   var quantityRecord = '';
   var locationUser = '';
@@ -86,7 +85,7 @@ xhr.onload = function () {
     }
   });
 
-
+  // TODO:分頁顯示，預設10筆 左< 右>
 
   function pharmacyList(name) {
     var pharmacyRow = document.querySelector('.js-pharmacyList');

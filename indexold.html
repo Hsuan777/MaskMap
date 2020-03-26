@@ -90,8 +90,7 @@
 
   <div class="container-fluid">
     <div class="row ">
-      <div class="col-lg-3">
-        <!--TODO:日後增加地址篩選 -->
+      <div class="col-lg-4">
         <!-- <div class="input-group mb-3">
             <input type="text" class="form-control border-right-0" placeholder="目前位置" aria-label="目前位置"
               aria-describedby="basic-addon2">
@@ -113,109 +112,100 @@
           </a>
         </div>
 
-
-
-
-
-        <!-- TODO:增加篩選條件與標籤，點選後篩選 -->
         <!-- ‧篩選條件說明 -->
-        <div class=" d-flex justify-content-between align-items-start">
-          <ul class="list-unstyled pharmacyList">
-            <li class="mb-3">
-              <!-- 選擇 縣市 -->
-              縣&emsp;&emsp;市 : 
-              <select name="" id="county">
-                <option value="" selected>請選擇縣市</option>
-              </select>
+        <div class="d-flex pl-4 ">
+          <ul class="pl-0">
+            <li>
+              <small>距離方圓 '5公里'</small>
             </li>
-            <li class="mb-3">
-              <!-- 選擇 區、鄉、鎮 -->
-              區&ensp;鄉&ensp;鎮 : 
-              <select name="" id="town">
-                <option value="" selected>請選擇區鄉鎮</option>
-              </select>
+            <li>
+              <small>成人口罩 '最多' TOP</small>
             </li>
-            <!-- 選擇 數量 -->
-            <li class="mb-3">
-              成人口罩 :
-              <select name="" id="quantity">
-                <option value="0" selected>大於 0</option>
-                <option value="50"  >大於 50</option>
-                <option value="100" >大於 100 </option>
-                <option value="300" >大於 300 </option>
-              </select>
-            </li>
-            <!-- 選擇 距離 -> 離自身範圍最近 -->
-            <li class="mb-3">
-              最近距離 :
-              <input class="ml-1" type="checkbox" value="" id="distance"  >
-            </li>
-            <li class="mb-3">
-              您的位置 :
-              <p class="ml-1 d-inline"  value="" id="area"></p>
-            </li>
-            
-
+            <!-- <li><small id="maskQty__web">大於 '0' 片</small></li> -->
+            <li><small>大於 '0' 片</small></li>
+            <!-- <li>
+              <button type="button" id="overfifty" value="50" class="btn btn-outline-primary badge-pill p-0 px-2 pb-1">
+                <small> > 50片</small> 
+              </button>
+            </li> -->
           </ul>
-          <button type="button" class="btn btn-outline-primary rounded-pill px-3  " onclick="location.reload();">
+          <button type="button" class="btn btn-outline-primary rounded-pill px-3 ml-auto align-self-center mt-3"
+            onclick="location.reload();">
             重整列表
           </button>
         </div>
-        <div class="row js-pharmacyList"></div>
-      </div>
 
-      <!-- 藥局資料 -->
-      <div class="col-lg-9 d-none d-md-block">
-        <div id="map"></div>
-        <!-- <div class="row ">
-          <div class="col-6 col-md-3 col-lg-4">
-            <div class="card p-3">
-              <div class="d-flex justify-content-around">
-                <div id="adult" class="mask__quantity bg-success rounded text-white p-2 mr-2">
-                  <p>成人口罩</p>
-                  <div class="d-flex">
-                    <p id="mask_adult" class="h2 font-weight-bold">200</p>
-                    <span class="text-white-50 h6 mt-3">片</span>
-                  </div>
-                </div>
-                <div id="child" class="mask__quantity bg-success rounded text-white p-2">
-                  <p>兒童口罩</p>
-                  <div class="d-flex">
-                    <p id="mask_child" class="h2 font-weight-bold">50</p>
-                    <span class="text-white-50 h6 mt-3">片</span>
-                  </div>
-                </div>
+        <!-- 藥局資料 -->
+        <div class="card p-3">
+          <div class="d-flex justify-content-around">
+            <div id="adult" class="mask__quantity bg-success rounded text-white p-2 mr-2">
+              <p>成人口罩</p>
+              <div class="d-flex">
+                <p id="mask_adult" class="h2 font-weight-bold">200</p>
+                <span class="text-white-50 h6 mt-3">片</span>
               </div>
-              <div class="card-body">
-                <div class="d-flex ">
-                  <h4 id="mask_pharmacy" class="card-title font-weight-bold">藥局</h4>
-                  <small id="nearDistance" class="mt-2 ml-1 font-weight-bold"></small>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <p class="card-text text-nowrap mr-5">地址<p>
-                      <a id="addressLink" href="#"><u id="address">於地圖查看</u></a>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <p class="card-text">電話</p>
-                  <a id="phoneLink" href=""><u id="phone">撥打電話</u></a>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <p class="card-text">更新時間</p>
-                  <p href="#" id="updated"></p>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <p class="card-text mr-5 text-nowrap">備註</p>
-                  <p href="#" id="note"></p>
-                </div>
+            </div>
+            <div id="child" class="mask__quantity bg-success rounded text-white p-2">
+              <p>兒童口罩</p>
+              <div class="d-flex">
+                <p id="mask_child" class="h2 font-weight-bold">50</p>
+                <span class="text-white-50 h6 mt-3">片</span>
               </div>
             </div>
           </div>
-        </div> -->
+          <div class="card-body">
+            <div class="d-flex ">
+              <h4 id="mask_pharmacy" class="card-title font-weight-bold">藥局</h4>
+              <small id="nearDistance" class="mt-2 ml-1 font-weight-bold"></small>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text text-nowrap mr-5">地址<p>
+                  <a id="addressLink" href="#"><u id="address">於地圖查看</u></a>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text">電話</p>
+              <a id="phoneLink" href=""><u id="phone">撥打電話</u></a>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text">更新時間</p>
+              <p href="#" id="updated"></p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="card-text mr-5 text-nowrap">備註</p>
+              <p href="#" id="note"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 其他藥局資料筆數 -->
+        <p id="otherPharmacy" class="text-center mt-2"></p>
+
+        <!-- 其他藥局資料 -->
+        <div class="accordion" id="accordionPharmacy">
+          <div class="card border-0">
+            <div class="card-header text-center" id="headingOne">
+              <button class="btn btn-primary rounded-pill px-5 py-2" type="button" data-toggle="collapse"
+                data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                查看更多
+              </button>
+            </div>
+
+            <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionPharmacy">
+              <div class="card-body border">
+                <ul id="pharmacyList"> </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-lg-8">
+        <div id="map"></div>
       </div>
     </div>
   </div>
 
-  <button type="button" class="btn btn-primary rounded-circle py-3  top">TOP</button>
+  <button type="button" class="btn btn-primary rounded-circle py-3 top">TOP</button>
 
   <footer class=" p-3 bg-primary">
     <h4 class="text-white">防疫專線 1922 | 口罩資訊 1911</h4>
@@ -232,7 +222,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
     integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
     crossorigin="anonymous"></script>
@@ -254,7 +244,7 @@
   <!-- markercluster JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
 
-  <script src="js/masklist.js"></script>
+  <script src="js/hexMaskMap.js"></script>
 
   <!-- turf可繪製進階圖形 -->
   <!-- <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script> -->
