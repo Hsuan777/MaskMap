@@ -9,8 +9,10 @@ xhr.onload = function () {
   var quantity = document.getElementById('quantity');
   // TODO:如何取得目前區域 ?
   var townName = '';
-  var quantityRecord ='';
+  var quantityRecord = '';
   var locationUser = '';
+
+
 
   // 預設
   // - 成人口罩數量大於零，由這個函數篩選 data資料
@@ -58,11 +60,14 @@ xhr.onload = function () {
     });
     clearPharmacyData();
     pharmacyList(townName);
-    distance.checked=false;
+    distance.checked = false;
   });
+
+
+  // 事件 -> 距離排序
   distance.addEventListener('change', function () {
     console.log(this.checked);
-    if (this.checked == true){
+    if (this.checked == true) {
       data = [];
       quantityMask(quantityRecord);
       data.sort(function (a, b) {
@@ -70,12 +75,12 @@ xhr.onload = function () {
       });
       clearPharmacyData();
       pharmacyList(townName);
-    }else{
+    } else {
       data = [];
       quantityMask(quantityRecord);
       data.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
-      });    
+      });
       clearPharmacyData();
       pharmacyList(townName);
     }
@@ -196,12 +201,11 @@ xhr.onload = function () {
   // 功能 -> 選擇要顯示的口罩數量
   function quantityMask(num) {
     for (i = 0; i < originalData.length; i++) {
-
       if (originalData[i].properties.mask_adult >= num) {
         data.push(originalData[i]);
       }
-
     }
+
   }
 
   // 功能 -> 使用者與藥局位置
@@ -211,13 +215,19 @@ xhr.onload = function () {
       // 取得使用者位置
       locationUser = L.latLng(position.coords.latitude, position.coords.longitude);
 
-      // 取得 -> 使用者與藥局距離並加入原始資料中
+      // 取得 -> 使用者與藥局距離 && 加入原始資料中 && 顯示使用者所在區域資料
       for (i = 0; i < originalData.length; i++) {
         originalData[i].geometry.distance = parseInt((locationUser.distanceTo(
           L.latLng(originalData[i].geometry.coordinates[1], originalData[i].geometry.coordinates[0])
         ) / 1000).toFixed(1));
       }
-
+      originalData.sort(function (a, b) {
+        return a.geometry.distance > b.geometry.distance ? 1 : -1;
+      });
+      console.log(originalData[0].properties.town);
+      townName = originalData[0].properties.town;
+      pharmacyList(townName);
+      document.getElementById('area').textContent =originalData[0].properties.county + townName;
 
       // 設定 -> leaflet參數 
       // - center 定位
