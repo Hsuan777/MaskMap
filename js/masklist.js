@@ -14,17 +14,10 @@ xhr.onload = function () {
 
 
   // 預設
-  // - 成人口罩數量大於零，由這個函數篩選 data資料
-  // - 排序 多 ->少
   // - 列出所有縣市
-  // - "未選"區鄉鎮 -> 不顯示
-  quantityMask(0);
-  data.sort(function (a, b) {
-    return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
-  });
   countyF();
+  
   scrollFunction();
-  // quantity.classList.add('d-none');
 
 
 
@@ -34,17 +27,18 @@ xhr.onload = function () {
     for (i = 0; i < selectTown.length; i++) {
       town.removeChild(selectTown[i]);
     }
-    // quantity.classList.remove('d-inline');
-    // quantity.classList.add('d-none');
     clearPharmacyData();
     townF(this.value);
   });
   // 事件 -> 區鄉鎮 所選值改變時，連帶變更資料
   town.addEventListener('change', function (e) {
     townName = this.value;
+    data = [];
     // quantity.classList.add('d-inline');
     clearPharmacyData();
-    pharmacyList(this.value);
+    quantityMask(townName,quantityRecord)
+    
+    pharmacyList();
   });
 
   // 事件 -> 數量排序 所選值改變時，連帶變更資料
@@ -52,13 +46,11 @@ xhr.onload = function () {
 
     data = [];
     // console.log(typeof(this.value)); -> 類型為字串
-    quantityMask(parseInt(this.value));
+    quantityMask(townName,parseInt(this.value));
     quantityRecord = parseInt(this.value);
-    data.sort(function (a, b) {
-      return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
-    });
+    
     clearPharmacyData();
-    pharmacyList(townName);
+    pharmacyList();
     distance.checked = false;
   });
 
@@ -68,30 +60,45 @@ xhr.onload = function () {
     console.log(this.checked);
     if (this.checked == true) {
       data = [];
-      quantityMask(quantityRecord);
-      data.sort(function (a, b) {
-        return a.geometry.distance > b.geometry.distance ? 1 : -1;
-      });
+      quantityMask(townName,quantityRecord);
+      
       clearPharmacyData();
-      pharmacyList(townName);
+      pharmacyList();
     } else {
       data = [];
-      quantityMask(quantityRecord);
-      data.sort(function (a, b) {
-        return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
-      });
+      quantityMask(townName,quantityRecord);
+      
       clearPharmacyData();
-      pharmacyList(townName);
+      pharmacyList();
     }
   });
 
-  // TODO:分頁顯示，預設10筆 左< 右>
 
-  function pharmacyList(name) {
+
+  // 功能 -> 藥局清單
+  function pharmacyList() {
     var pharmacyRow = document.querySelector('.js-pharmacyList');
+    var filterData = [];
+    // var lastLength = '';
+    // var pageTotal = Math.ceil(pageTotalArray.length / 10);
+    // // TODO: 可新增 5筆、15筆、20筆資料
+    // // - 小於 10 筆資料
+    // // - 滿 10 筆資料且不是最後一頁
+    // // - 最後一頁且有餘數
+    // if (pageTotalArray.length < 10) {
+    //   lastLength = pageTotalArray.length % 10;
+    // } else if (pageTotalArray.length % 10 === 0 || num !== pageTotal) {
+    //   lastLength = num * 10;
+    // } else if (pageTotalArray.length % 10 !== 0 && num === pageTotal) {
+    //   lastLength = (num - 1) * 10 + pageTotalArray.length % 10;
+    // }
+    // i = (num - 1) * 10; i < lastLength; i++
+
     for (i = 0; i < data.length; i++) {
 
-      if (name === data[i].properties.town) {
+        console.log(data.length)
+
+        filterData.push(data[i]);
         var col = document.createElement('div');
         var card = document.createElement('div');
         var flex = document.createElement('div');
@@ -104,8 +111,7 @@ xhr.onload = function () {
         var mask__Note = document.createElement('p');
         var mask__Distance = document.createElement('small');
 
-
-
+        
         mask__Pharmacy.textContent = data[i].properties.name;
         mask__Adult.innerHTML = '成人' + '<br>' + data[i].properties.mask_adult;
         mask__Child.innerHTML = '兒童' + '<br>' + data[i].properties.mask_child;
@@ -157,8 +163,9 @@ xhr.onload = function () {
         card.appendChild(mask__Phone);
         card.appendChild(mask__Updated);
         card.appendChild(mask__Note);
-      }
+      
     }
+
   }
 
 
@@ -197,15 +204,24 @@ xhr.onload = function () {
   }
 
 
-  // 功能 -> 選擇要顯示的口罩數量
-  function quantityMask(num) {
+  //  功能 -> 選擇要顯示的口罩數量，若開啟最近距離則依距離排序，否則數量排序
+  function quantityMask(name, num) {
     for (i = 0; i < originalData.length; i++) {
-      if (originalData[i].properties.mask_adult >= num) {
+      if (name === originalData[i].properties.town && originalData[i].properties.mask_adult >= num) {
         data.push(originalData[i]);
       }
     }
-
+    if (distance.checked === true){
+      data.sort(function (a, b) {
+        return a.geometry.distance > b.geometry.distance ? 1 : -1;
+      });
+    }else {
+      data.sort(function (a, b) {
+        return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
+      });
+    }
   }
+
 
   // 功能 -> 使用者與藥局位置
   if (navigator.geolocation) {
@@ -225,8 +241,16 @@ xhr.onload = function () {
       });
       console.log(originalData[0].properties.town);
       townName = originalData[0].properties.town;
-      pharmacyList(townName);
-      document.getElementById('area').textContent =originalData[0].properties.county + townName;
+
+      // 所在區域藥局清單，顯示第一頁
+      quantityMask(townName,0)
+      pharmacyList();
+
+
+
+
+      // 預先顯示使用者目前區域
+      document.getElementById('area').textContent = originalData[0].properties.county + townName;
 
       // 設定 -> leaflet參數 
       // - center 定位

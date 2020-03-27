@@ -58,7 +58,8 @@
         <div class="collapse navbar-collapse " id="navbarNavAltMarkup">
           <div class="navbar-nav ml-auto">
 
-            <a class="nav-item nav-link pl-0" href="https://play.google.com/store/apps/details?id=com.nhiApp.v1&hl=zh_TW" >APP預購口罩</a>
+            <a class="nav-item nav-link pl-0"
+              href="https://play.google.com/store/apps/details?id=com.nhiApp.v1&hl=zh_TW">APP預購口罩</a>
             <a class="nav-item nav-link pl-0" href="#" data-toggle="modal" data-target="#buyMask">口罩如何購買</a>
             <!-- #buyMask Modal -->
             <div class="modal fade" id="buyMask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -123,14 +124,14 @@
           <ul class="list-unstyled pharmacyList">
             <li class="mb-3">
               <!-- 選擇 縣市 -->
-              縣&emsp;&emsp;市 : 
+              縣&emsp;&emsp;市 :
               <select name="" id="county">
                 <option value="" selected>請選擇縣市</option>
               </select>
             </li>
             <li class="mb-3">
               <!-- 選擇 區、鄉、鎮 -->
-              區&ensp;鄉&ensp;鎮 : 
+              區&ensp;鄉&ensp;鎮 :
               <select name="" id="town">
                 <option value="" selected>請選擇區鄉鎮</option>
               </select>
@@ -139,35 +140,57 @@
             <li class="mb-3">
               成人口罩 :
               <select name="" id="quantity">
-                <option value="0" selected>大於 0</option>
-                <option value="50"  >大於 50</option>
-                <option value="100" >大於 100 </option>
-                <option value="300" >大於 300 </option>
+                <option value="0" selected>0 以上</option>
+                <option value="50">50 以上</option>
+                <option value="100">100 以上</option>
+                <option value="300">300 以上</option>
               </select>
             </li>
             <!-- 選擇 距離 -> 離自身範圍最近 -->
             <li class="mb-3">
               最近距離 :
-              <input class="ml-1" type="checkbox" value="" id="distance"  >
+              <input class="ml-1" type="checkbox" value="" id="distance"> 
+               <label for="distance">圓形分布</label> 
             </li>
             <li class="mb-3">
               您的位置 :
-              <p class="ml-1 d-inline"  value="" id="area"></p>
+              <p class="ml-1 d-inline" value="" id="area"></p>
             </li>
-            
+
 
           </ul>
-          <button type="button" class="btn btn-outline-primary rounded-pill px-3  " onclick="location.reload();">
+          <button type="button" class="btn btn-primary rounded-pill px-3  " onclick="location.reload();">
             重整列表
           </button>
         </div>
+
+        <!-- 藥局資料 -->
         <div class="row js-pharmacyList"></div>
+
+        <!-- 資料分頁 -->
+        <div class="d-flex flex-column justify-content-center align-items-center ">
+          <nav aria-label="Page navigation ">
+            <ul class="pagination ">
+              <li class="page-item ">
+                <button type="button" class="page-link bg-secondary mr-1" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </button>
+              </li>
+              <!-- <li class="page-item"><a class="page-link bg-secondary" href="#">1</a></li> -->
+              <li class="page-item">
+                <button type="button" class="page-link bg-secondary ml-1" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </button>
+              </li>
+            </ul>
+          </nav>
+          
+        </div>
       </div>
 
-      <!-- 藥局資料 -->
+      <!-- 地圖資訊 -->
       <div class="col-lg-9 d-none d-md-block">
         <div id="map"></div>
-        
       </div>
     </div>
   </div>
