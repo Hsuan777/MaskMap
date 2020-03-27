@@ -155,8 +155,10 @@
               您的位置 :
               <p class="ml-1 d-inline" value="" id="area"></p>
             </li>
-
-
+            <li class="mb-3">
+              資料筆數 :<br>
+              <p class=" d-inline" value="" id="dataList"></p>
+            </li>
           </ul>
           <button type="button" class="btn btn-primary rounded-pill px-3  " onclick="location.reload();">
             重整列表
@@ -167,17 +169,17 @@
         <div class="row js-pharmacyList"></div>
 
         <!-- 資料分頁 -->
-        <div class="d-flex flex-column justify-content-center align-items-center ">
+        <div class="d-flex justify-content-center align-items-center ">
           <nav aria-label="Page navigation ">
             <ul class="pagination ">
               <li class="page-item ">
-                <button type="button" class="page-link bg-secondary mr-1" aria-label="Previous">
+                <button type="button" class="page-link bg-light mr-1" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </button>
               </li>
               <!-- <li class="page-item"><a class="page-link bg-secondary" href="#">1</a></li> -->
               <li class="page-item">
-                <button type="button" class="page-link bg-secondary ml-1" aria-label="Next">
+                <button type="button" class="page-link bg-light ml-1" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </button>
               </li>
