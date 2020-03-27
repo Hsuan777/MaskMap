@@ -119,9 +119,7 @@ xhr.onload = function () {
         mask__Phone.innerHTML = '<span class="material-icons">phonelink_ring</span>' + data[i].properties.phone;
         mask__Updated.innerHTML = '<span class="material-icons mr-1cd">update</span>' + data[i].properties.updated;
         mask__Note.innerHTML = '<span class="material-icons">event_note</span>' + data[i].properties.note;
-        mask__Distance.textContent = (locationUser.distanceTo(
-          L.latLng(data[i].geometry.coordinates[1], data[i].geometry.coordinates[0])
-        ) / 1000).toFixed(1) + 'km';
+        mask__Distance.textContent = data[i].geometry.distance + 'km';
 
         col.classList.add('col', 'col-md-4', 'col-lg-12', 'mb-3', 'js-col');
         card.classList.add('card', 'p-1');
@@ -215,6 +213,7 @@ xhr.onload = function () {
       data.sort(function (a, b) {
         return a.geometry.distance > b.geometry.distance ? 1 : -1;
       });
+      console.log(data)
     }else {
       data.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
