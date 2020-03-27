@@ -2,6 +2,14 @@ var xhr = new XMLHttpRequest();
 xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
 xhr.send(null);
 xhr.onload = function () {
+  // - originalData    -> 原始資料，若取得使用者位置資訊，則加入距離資料
+  // - data            -> 篩選資料用
+  // - countyF()       -> 取得縣市列表
+  // - townF()         -> 取得縣市之區鄉鎮列表
+  // - quantityMask()  -> 取得要顯示的口罩數量並依照數量多至少排序
+  // - townName        -> 紀錄目前區鄉鎮名稱
+  // - quantityRecord  -> 紀錄目前口罩顯示數量
+  // - locationUser    -> 使用者目前位置
   var originalData = JSON.parse(xhr.responseText).features;
   var data = [];
   var county = document.getElementById('county');
@@ -10,15 +18,92 @@ xhr.onload = function () {
   var townName = '';
   var quantityRecord = '';
   var locationUser = '';
+  var pageLocalArray = [1];
 
 
-
-  // 預設
-  // - 列出所有縣市
+  // 預先執行功能
   countyF();
-
   scrollFunction();
+  // 判斷 +功能 -> 若使用者同意被取得位置，則執行功能
+  // - 已匯入 leaflet.js
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(success, error);
+    function success(position) {
+      // 取得 -> 使用者位置
+      locationUser = L.latLng(position.coords.latitude, position.coords.longitude);
 
+      // 取得 -> 使用者與藥局距離 && 增加原始資料 geometry.distance && 顯示使用者所在區域資料
+      for (i = 0; i < originalData.length; i++) {
+        originalData[i].geometry.distance = parseInt((locationUser.distanceTo(
+          L.latLng(originalData[i].geometry.coordinates[1], originalData[i].geometry.coordinates[0])
+        ) / 1000).toFixed(1));
+      }
+      // 取得 -> 取得最近一間藥局所在區域，作為使用者目前區域
+      // - 但可能遇到跨區問題，或是網路定位錯誤
+      originalData.sort(function (a, b) {
+        return a.geometry.distance > b.geometry.distance ? 1 : -1;
+      });
+      townName = originalData[0].properties.town;
+
+      // 執行所在區域藥局清單並顯示第一頁
+      quantityMask(townName, 0)
+      pharmacyList(1);
+
+
+      // 預先顯示使用者目前區域
+      document.getElementById('area').textContent = originalData[0].properties.county + townName;
+
+      // 設定 -> leaflet參數 
+      // - center 定位
+      // - zoom 縮放等級
+      var map = L.map('map', {
+        center: [position.coords.latitude, position.coords.longitude],
+        zoom: 13
+      });
+
+      // 將 openstreetmap 加入地圖，map 為網頁的 #map
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      // 將每個定點做群組，強化搜尋體驗
+      // - 參考 https://github.com/Leaflet/Leaflet.markercluster
+      var markers = L.markerClusterGroup().addTo(map);
+
+      // 使用者為中心，方圓 5公里視覺化
+      L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
+
+      // 對每筆資料上不同 icon，並顯示資訊
+      for (let i = 0; i < data.length; i++) {
+        var mask = "";
+
+        if (data[i].properties.mask_adult == 0) {
+          mask = greyIcon;
+        } else if (data[i].properties.mask_adult < 50) {
+          mask = orangeIcon;
+        } else if (data[i].properties.mask_adult >= 50) {
+          mask = greenIcon;
+        };
+        markers.addLayer(L.marker(
+          [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]],
+          { icon: mask })
+          .bindPopup(data[i].properties.name
+            + "<br>" + "成人口罩 : "
+            + data[i].properties.mask_adult
+            + "<br>" + "兒童口罩 : "
+            + data[i].properties.mask_child
+            + "<br>" + "備註 : "
+            + data[i].properties.note
+          ));
+      }
+      map.addLayer(markers);
+    }
+    function error() {
+      alert('無法取得你的位置');
+    }
+  } else {
+    alert('Sorry, 你的裝置不支援地理位置功能。')
+  }
 
 
   // 事件 -> 縣市 所選值改變時，連帶變更資料
@@ -33,9 +118,9 @@ xhr.onload = function () {
     var pagination = document.querySelector('.pagination');
     dataList.textContent = "未選擇區鄉鎮";
     pagination.style.display = 'none';
-
-
   });
+
+
   // 事件 -> 區鄉鎮 所選值改變時，連帶變更資料
   town.addEventListener('change', function (e) {
     townName = this.value;
@@ -47,13 +132,11 @@ xhr.onload = function () {
     pharmacyList(1);
     var pagination = document.querySelector('.pagination');
     pagination.style.display = 'block';
-
-
   });
+
 
   // 事件 -> 數量排序 所選值改變時，連帶變更資料
   quantity.addEventListener('change', function (e) {
-
     data = [];
     // console.log(typeof(this.value)); -> 類型為字串
     quantityMask(townName, parseInt(this.value));
@@ -86,8 +169,9 @@ xhr.onload = function () {
       pharmacyList(1);
     }
   });
+
+
   // 事件 -> 點擊上下頁
-  var pageLocalArray = [1];
   pageLocalArray[0] = 1;
   localStorage.setItem('pageLinkNumber', JSON.stringify(pageLocalArray));
   var pageLink = document.querySelectorAll('.page-link');
@@ -102,10 +186,8 @@ xhr.onload = function () {
       pharmacyList(pageLocalArray[0]);
       topFunction(0);
     }
-
   });
   pageLink[1].addEventListener('click', function () {
-
     if (pageLocalArray[0] + 1 === Math.ceil(data.length / 10) + 1) {
       alert('最後一頁囉 !')
       return;
@@ -120,6 +202,7 @@ xhr.onload = function () {
 
 
   // 功能 -> 藥局清單
+  // - num 為頁數
   function pharmacyList(num) {
     var pharmacyRow = document.querySelector('.js-pharmacyList');
     var dataList = document.getElementById('dataList');
@@ -207,13 +290,12 @@ xhr.onload = function () {
       card.appendChild(mask__Phone);
       card.appendChild(mask__Updated);
       card.appendChild(mask__Note);
-
     }
-
   }
 
 
-  // 功能 -> 列出所有縣市
+  // 功能 -> 縣市列表
+  // - county會有空值
   function countyF() {
     var countyArray = [];
     for (let i = 0; i < originalData.length; i++) {
@@ -229,7 +311,8 @@ xhr.onload = function () {
     }
   }
 
-  // 功能 -> 列出該縣市之"區、鄉、鎮"
+
+  // 功能 -> 區、鄉、鎮列表
   function townF(county) {
     var townArray = [];
     for (let i = 0; i < originalData.length; i++) {
@@ -267,97 +350,16 @@ xhr.onload = function () {
     }
   }
 
-
-  // 功能 -> 使用者與藥局位置
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(success, error);
-    function success(position) {
-      // 取得使用者位置
-      locationUser = L.latLng(position.coords.latitude, position.coords.longitude);
-
-      // 取得 -> 使用者與藥局距離 && 加入原始資料中 && 顯示使用者所在區域資料
-      for (i = 0; i < originalData.length; i++) {
-        originalData[i].geometry.distance = parseInt((locationUser.distanceTo(
-          L.latLng(originalData[i].geometry.coordinates[1], originalData[i].geometry.coordinates[0])
-        ) / 1000).toFixed(1));
-      }
-      originalData.sort(function (a, b) {
-        return a.geometry.distance > b.geometry.distance ? 1 : -1;
-      });
-      console.log(originalData[0].properties.town);
-      townName = originalData[0].properties.town;
-
-      // 所在區域藥局清單，顯示第一頁
-      quantityMask(townName, 0)
-      pharmacyList(1);
-
-
-
-
-      // 預先顯示使用者目前區域
-      document.getElementById('area').textContent = originalData[0].properties.county + townName;
-
-      // 設定 -> leaflet參數 
-      // - center 定位
-      // - zoom 縮放等級
-      var map = L.map('map', {
-        center: [position.coords.latitude, position.coords.longitude],
-        zoom: 13
-      });
-
-      // 將 openstreetmap 加入地圖，map 為網頁的 #map
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-
-      // 將每個定點做群組，強化搜尋體驗
-      // - 參考 https://github.com/Leaflet/Leaflet.markercluster
-      var markers = L.markerClusterGroup().addTo(map);
-
-      // 使用者為中心，方圓 5公里視覺化
-      L.circle([position.coords.latitude, position.coords.longitude], { radius: 5000 }).addTo(map);
-
-      for (let i = 0; i < data.length; i++) {
-        var mask = "";
-
-        if (data[i].properties.mask_adult == 0) {
-          mask = greyIcon;
-        } else if (data[i].properties.mask_adult < 50) {
-          mask = orangeIcon;
-        } else if (data[i].properties.mask_adult >= 50) {
-          mask = greenIcon;
-        };
-        markers.addLayer(L.marker(
-          [data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]],
-          { icon: mask })
-          .bindPopup(data[i].properties.name
-            + "<br>" + "成人口罩 : "
-            + data[i].properties.mask_adult
-            + "<br>" + "兒童口罩 : "
-            + data[i].properties.mask_child
-            + "<br>" + "備註 : "
-            + data[i].properties.note
-          ));
-      }
-      map.addLayer(markers);
+  // 功能 -> 清除資料
+  function clearPharmacyData() {
+    var pharmacyRow = document.querySelector('.js-pharmacyList');
+    var jsCol = document.querySelectorAll(".js-col");
+    for (i = 0; i < jsCol.length; i++) {
+      pharmacyRow.removeChild(jsCol[i]);
     }
-    function error() {
-      alert('無法取得你的位置');
-    }
-  } else {
-    alert('Sorry, 你的裝置不支援地理位置功能。')
-  }
-
-}
-
-// 功能 -> 清除資料
-function clearPharmacyData() {
-  var pharmacyRow = document.querySelector('.js-pharmacyList');
-  var jsCol = document.querySelectorAll(".js-col");
-  for (i = 0; i < jsCol.length; i++) {
-    pharmacyRow.removeChild(jsCol[i]);
   }
 }
+
 
 
 // 取得 + 判斷  -> 奇偶數
@@ -379,8 +381,9 @@ switch (d.getDay()) {
     break;
 }
 
+
 // 取得 -> 使用 ICON 大頭針 
-//  -感謝作者分享 https://github.com/pointhi/leaflet-color-markers
+//  - 參考 https://github.com/pointhi/leaflet-color-markers
 var greenIcon = new L.Icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -412,13 +415,14 @@ var greyIcon = new L.Icon({
 window.onscroll = function () {
   scrollFunction();
 };
+
+
 function scrollFunction() {
   var top = document.querySelector('.top');
 
   // 判斷 -> 若滾動頁面超過 100 ，則顯示
   // - document.documentElement -> <html>, For Chrome, Firefox, IE and Opera
   // - document.body -> <body>, for  Safari
-
   if (window.pageYOffset > 100 || document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
     top.style.display = "block";
   } else {
@@ -441,7 +445,7 @@ function topFunction(scrollNumber) {
 }
 
 // ? 問題 
-// -  this ; e.target 
+// - this ; e.target 
 // - change事件是相同觸發元素相同目標 ?
 // - ul>li 監聽 ul click事件時，是同一個觸發元素不同目標 ?
 // - 若剛好目標相同，怎樣的情況較適合哪一種 ?
