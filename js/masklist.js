@@ -21,7 +21,8 @@ xhr.onload = function () {
   var pageLocalArray = [1];
 
 
-  // 預先執行功能
+  // ***** 預先執行 *****//
+
   countyF();
   scrollFunction();
   // 判斷 +功能 -> 若使用者同意被取得位置，則執行功能
@@ -48,6 +49,7 @@ xhr.onload = function () {
       // 執行所在區域藥局清單並顯示第一頁
       quantityMask(townName, 0)
       pharmacyList(1);
+      
 
 
       // 預先顯示使用者目前區域
@@ -106,6 +108,10 @@ xhr.onload = function () {
   }
 
 
+
+
+  // ***** 監聽事件 *****//
+
   // 事件 -> 縣市 所選值改變時，連帶變更資料
   county.addEventListener('change', function (e) {
     var selectTown = document.querySelectorAll(".select__town");
@@ -152,7 +158,6 @@ xhr.onload = function () {
 
   // 事件 -> 距離排序
   distance.addEventListener('change', function () {
-    console.log(this.checked);
     if (this.checked == true) {
       data = [];
       quantityMask(townName, quantityRecord);
@@ -201,6 +206,9 @@ xhr.onload = function () {
   });
 
 
+
+  // ***** function *****//
+
   // 功能 -> 藥局清單
   // - num 為頁數
   function pharmacyList(num) {
@@ -221,10 +229,7 @@ xhr.onload = function () {
     } else if (data.length % 10 !== 0 && num === pageTotal) {
       dataLength = (num - 1) * 10 + data.length % 10;
     }
-    // i = 0; i < data.length; i++
-    // i = (num - 1) * 10; i < dataLength; i++
-
-
+    
 
     for (i = (num - 1) * 10; i < dataLength; i++) {
 
@@ -342,7 +347,6 @@ xhr.onload = function () {
       data.sort(function (a, b) {
         return a.geometry.distance > b.geometry.distance ? 1 : -1;
       });
-      console.log(data)
     } else {
       data.sort(function (a, b) {
         return a.properties.mask_adult > b.properties.mask_adult ? -1 : 1;
@@ -444,10 +448,21 @@ function topFunction(scrollNumber) {
   });
 }
 
+// TODO
+// - 中心點增加大頭針 
+// - 點選 || hover 該藥局後，地圖移動至該座標並顯示大頭針
+
+//  
+// - change事件改變所選 option 會觸發所寫功能
+// - 如何 "取得" select之未觸發 change事件所選值 ?
+// - 不寫在 change事件裡面就可以了 console.log(quantity.value)
+
+
+
 // ? 問題 
 // - this ; e.target 
 // - change事件是相同觸發元素相同目標 ?
-// - ul>li 監聽 ul click事件時，是同一個觸發元素不同目標 ?
+// - ul>li 監聽 ul click事件時，是同一個觸發元素但不同目標 ?
 // - 若剛好目標相同，怎樣的情況較適合哪一種 ?
 
 // ? 問題
@@ -463,16 +478,7 @@ function topFunction(scrollNumber) {
 // - 但為了組字串方便而混用，在多數情況下，較推薦使用哪一種方式組字串呢 ?
 
 
-// ? 問題 
-// - 排序皆由數量多到少 -> 數量排序與距離排序擇一
-// - 條件一:數量、條件二:距離
-// - 單一篩選 數量
-// - 單一篩選 距離
-// - 多重條件篩選 數量(0、50、100) && 距離(5、10、20、不選)
-// - 如何"取得"未觸發 change事件所選值
-// - 若已觸發則如何保留所選值，然後綜合其他所選條件再去做行為
-// - 不選如何寫"判斷"
 
-// ? 問題 
-// - 中心點如何增加大頭針 ?
-// - 點選 || hover 該藥局後，地圖移動至該座標並顯示大頭針
+
+
+
